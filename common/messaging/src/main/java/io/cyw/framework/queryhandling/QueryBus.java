@@ -20,6 +20,7 @@ import io.cyw.framework.messaging.MessageDispatchInterceptorSupport;
 import io.cyw.framework.messaging.MessageHandler;
 import io.cyw.framework.messaging.MessageHandlerInterceptorSupport;
 import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.helpers.queues.Queues;
 
 import java.lang.reflect.Type;
@@ -144,9 +145,9 @@ public interface QueryBus extends MessageHandlerInterceptorSupport<QueryMessage<
         return new SubscriptionQueryResult<QueryResponseMessage<I>, SubscriptionQueryUpdateMessage<U>>() {
 
             @Override
-            public Multi<QueryResponseMessage<I>> initialResult() {
-              return   Multi.createFrom().emitter(multiEmitter -> query(query).thenAccept(multiEmitter::emit).exceptionally(t -> {
-                    multiEmitter.fail(t);
+            public Uni<QueryResponseMessage<I>> initialResult() {
+              return   Uni.createFrom().emitter(uniEmitter -> query(query).thenAccept(uniEmitter::complete).exceptionally(t -> {
+                  uniEmitter.fail(t);
                     return null;
                 }));
             }

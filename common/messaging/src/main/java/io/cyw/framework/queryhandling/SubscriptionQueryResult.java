@@ -19,6 +19,7 @@ package io.cyw.framework.queryhandling;
 
 import io.cyw.framework.common.Registration;
 import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 
 import java.util.function.Consumer;
 
@@ -38,7 +39,7 @@ public interface SubscriptionQueryResult<I, U> extends Registration {
      *
      * @return the mono representing the initial result
      */
-    Multi<I> initialResult();
+    Uni<I> initialResult();
 
     /**
      * When there is an update to the subscription query, it will be emitted to this flux.

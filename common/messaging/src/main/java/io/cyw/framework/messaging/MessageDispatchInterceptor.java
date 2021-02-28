@@ -16,6 +16,8 @@
 
 package io.cyw.framework.messaging;
 
+import io.smallrye.mutiny.Uni;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -48,6 +50,10 @@ public interface MessageDispatchInterceptor<T extends Message<?>> {
      * @param messages  The Messages to pre-process
      * @return a function that processes messages based on their position in the list
      */
-    BiFunction<Integer, T, T> handle(List<? extends T> messages);
+    default BiFunction<Integer, T, T> handle(List<? extends T> messages){
+        return (position, message) -> intercept(Uni.createFrom().item(message)).await().indefinitely();
+    }
+
+    Uni<T> intercept(Uni<T> message);
 
 }
