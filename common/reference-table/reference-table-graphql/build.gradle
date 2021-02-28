@@ -1,0 +1,6 @@
+apply from: rootProject.file('gradle/java-module.gradle')
+
+dependencies {
+    implementation project(':common:reference-table:reference-table-query')
+    implementation 'io.quarkus:quarkus-smallrye-graphql'
+}

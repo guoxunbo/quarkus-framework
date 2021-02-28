@@ -1,0 +1,7 @@
+apply from: rootProject.file('gradle/java-module.gradle')
+
+dependencies {
+    implementation project(':common:core')
+    implementation project(':common:utils')
+    implementation 'io.quarkus:quarkus-mutiny'
+}

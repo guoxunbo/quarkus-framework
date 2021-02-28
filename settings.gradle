@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        maven {
+            name "ali-public"
+            url "https://maven.aliyun.com/repository/public"
+        }
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+//    plugins {
+//        id "${quarkusPluginId}" version "${quarkusPluginVersion}"
+//    }
+}
+rootProject.name='quarkus-framework'
+
+include 'dependencies'
+include 'common:utils'
+include 'common:core'
+
+include 'common:messaging'
+include 'common:hibernate-orm-panache'
+
+include 'common:reference-table:reference-table-graphql'
+include 'common:reference-table:reference-table-daemon'
+include 'common:reference-table:reference-table-query'

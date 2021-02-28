@@ -1,0 +1,13 @@
+allprojects {
+    group = projectGroup
+    version = projectVersion
+
+    repositories {
+        maven {
+            name "ali-public"
+            url "https://maven.aliyun.com/repository/public"
+        }
+        mavenLocal()
+        mavenCentral()
+    }
+}
