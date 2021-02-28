@@ -33,7 +33,9 @@ import static java.lang.String.format;
 public class SimpleSerializedObject<T> implements SerializedObject<T> {
 
     private final T data;
+
     private final SerializedType type;
+
     private final Class<T> dataType;
 
     /**
@@ -65,11 +67,6 @@ public class SimpleSerializedObject<T> implements SerializedObject<T> {
     }
 
     @Override
-    public T getData() {
-        return data;
-    }
-
-    @Override
     public Class<T> getContentType() {
         return dataType;
     }
@@ -77,6 +74,16 @@ public class SimpleSerializedObject<T> implements SerializedObject<T> {
     @Override
     public SerializedType getType() {
         return type;
+    }
+
+    @Override
+    public T getData() {
+        return data;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data, type, dataType);
     }
 
     @Override
@@ -88,17 +95,13 @@ public class SimpleSerializedObject<T> implements SerializedObject<T> {
             return false;
         }
         SimpleSerializedObject<?> that = (SimpleSerializedObject<?>) o;
-        return Objects.equals(data, that.data) && Objects.equals(type, that.type) &&
-                Objects.equals(dataType, that.dataType);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(data, type, dataType);
+        return Objects.equals(data, that.data) && Objects.equals(type, that.type) && Objects
+                .equals(dataType, that.dataType);
     }
 
     @Override
     public String toString() {
         return format("SimpleSerializedObject [%s]", type);
     }
+
 }

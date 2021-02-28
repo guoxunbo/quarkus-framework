@@ -31,6 +31,7 @@ import java.util.Optional;
 public abstract class HandlerExecutionException extends SystemIllegalException {
 
     private static final long serialVersionUID = -5368112947651744952L;
+
     private final Object details;
 
     /**
@@ -96,4 +97,5 @@ public abstract class HandlerExecutionException extends SystemIllegalException {
     public <R> Optional<R> getDetails() {
         return Optional.ofNullable((R) details);
     }
+
 }

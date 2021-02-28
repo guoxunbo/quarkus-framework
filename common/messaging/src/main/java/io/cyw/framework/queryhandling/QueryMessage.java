@@ -33,13 +33,6 @@ import java.util.Map;
 public interface QueryMessage<T, R> extends Message<T> {
 
     /**
-     * Returns the name identifying the query to be executed.
-     *
-     * @return the name identifying the query to be executed.
-     */
-    String getQueryName();
-
-    /**
      * Extracts the {@code queryName} from the given {@code payloadOrMessage}, with three possible outcomes:
      * <ul>
      * <li>The {@code payloadOrMessage} is an instance of {@link QueryMessage} - {@link QueryMessage#getQueryName()} is returned.</li>
@@ -59,6 +52,13 @@ public interface QueryMessage<T, R> extends Message<T> {
         }
         return payloadOrMessage.getClass().getName();
     }
+
+    /**
+     * Returns the name identifying the query to be executed.
+     *
+     * @return the name identifying the query to be executed.
+     */
+    String getQueryName();
 
     /**
      * The type of response expected by the sender of the query
@@ -83,4 +83,5 @@ public interface QueryMessage<T, R> extends Message<T> {
      * @return a copy of this message with the given additional MetaData
      */
     QueryMessage<T, R> andMetaData(Map<String, ?> additionalMetaData);
+
 }

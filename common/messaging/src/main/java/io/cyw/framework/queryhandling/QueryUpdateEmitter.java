@@ -76,10 +76,9 @@ public interface QueryUpdateEmitter extends MessageDispatchInterceptorSupport<Su
      * @param <U>       the type of the update
      */
     @SuppressWarnings("unchecked")
-    default <Q, U> void emit(Class<Q> queryType, Predicate<? super Q> filter,
-                             SubscriptionQueryUpdateMessage<U> update) {
-        Predicate<SubscriptionQueryMessage<?, ?, U>> sqmFilter =
-                m -> queryType.isAssignableFrom(m.getPayloadType()) && filter.test((Q) m.getPayload());
+    default <Q, U> void emit(Class<Q> queryType, Predicate<? super Q> filter, SubscriptionQueryUpdateMessage<U> update) {
+        Predicate<SubscriptionQueryMessage<?, ?, U>> sqmFilter = m -> queryType
+                .isAssignableFrom(m.getPayloadType()) && filter.test((Q) m.getPayload());
         emit(sqmFilter, update);
     }
 
@@ -116,8 +115,8 @@ public interface QueryUpdateEmitter extends MessageDispatchInterceptorSupport<Su
      */
     @SuppressWarnings("unchecked")
     default <Q> void complete(Class<Q> queryType, Predicate<? super Q> filter) {
-        Predicate<SubscriptionQueryMessage<?, ?, ?>> sqmFilter =
-                m -> queryType.isAssignableFrom(m.getPayloadType()) && filter.test((Q) m.getPayload());
+        Predicate<SubscriptionQueryMessage<?, ?, ?>> sqmFilter = m -> queryType
+                .isAssignableFrom(m.getPayloadType()) && filter.test((Q) m.getPayload());
         complete(sqmFilter);
     }
 
@@ -139,8 +138,8 @@ public interface QueryUpdateEmitter extends MessageDispatchInterceptorSupport<Su
      */
     @SuppressWarnings("unchecked")
     default <Q> void completeExceptionally(Class<Q> queryType, Predicate<? super Q> filter, Throwable cause) {
-        Predicate<SubscriptionQueryMessage<?, ?, ?>> sqmFilter =
-                m -> queryType.isAssignableFrom(m.getPayloadType()) && filter.test((Q) m.getPayload());
+        Predicate<SubscriptionQueryMessage<?, ?, ?>> sqmFilter = m -> queryType
+                .isAssignableFrom(m.getPayloadType()) && filter.test((Q) m.getPayload());
         completeExceptionally(sqmFilter, cause);
     }
 
@@ -161,8 +160,7 @@ public interface QueryUpdateEmitter extends MessageDispatchInterceptorSupport<Su
      * @param <U>              the incremental response types of the query
      * @return the object which contains updates and a registration which can be used to cancel them
      */
-    <U> UpdateHandlerRegistration<U> registerUpdateHandler(SubscriptionQueryMessage<?, ?, ?> query,
-                                                           int updateBufferSize);
+    <U> UpdateHandlerRegistration<U> registerUpdateHandler(SubscriptionQueryMessage<?, ?, ?> query, int updateBufferSize);
 
     /**
      * Provides the set of running subscription queries. If there are changes to subscriptions they will be reflected in
@@ -173,4 +171,5 @@ public interface QueryUpdateEmitter extends MessageDispatchInterceptorSupport<Su
     default Set<SubscriptionQueryMessage<?, ?, ?>> activeSubscriptions() {
         return Collections.emptySet();
     }
+
 }

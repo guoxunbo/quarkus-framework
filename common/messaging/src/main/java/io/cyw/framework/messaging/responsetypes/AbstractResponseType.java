@@ -94,9 +94,8 @@ public abstract class AbstractResponseType<R> implements ResponseType<R> {
         }
 
         Type actualTypeArgument = actualTypeArguments[0];
-        return isAssignableFrom(actualTypeArgument) ||
-                isGenericAssignableFrom(actualTypeArgument) ||
-                isWildcardTypeWithMatchingUpperBound(actualTypeArgument);
+        return isAssignableFrom(actualTypeArgument) || isGenericAssignableFrom(
+                actualTypeArgument) || isWildcardTypeWithMatchingUpperBound(actualTypeArgument);
     }
 
     protected boolean isParameterizedType(Type responseType) {
@@ -110,8 +109,8 @@ public abstract class AbstractResponseType<R> implements ResponseType<R> {
         }
 
         Type[] upperBounds = ((WildcardType) responseType).getUpperBounds();
-        return Arrays.stream(upperBounds).anyMatch(this::isAssignableFrom) ||
-                Arrays.stream(upperBounds).anyMatch(this::isGenericAssignableFrom);
+        return Arrays.stream(upperBounds).anyMatch(this::isAssignableFrom) || Arrays.stream(upperBounds)
+                .anyMatch(this::isGenericAssignableFrom);
     }
 
     protected boolean isWildcardType(Type responseType) {
@@ -127,8 +126,8 @@ public abstract class AbstractResponseType<R> implements ResponseType<R> {
     }
 
     protected boolean isGenericArrayOfExpectedType(Type responseType) {
-        return isGenericArrayType(responseType) &&
-                isGenericAssignableFrom(((GenericArrayType) responseType).getGenericComponentType());
+        return isGenericArrayType(responseType) && isGenericAssignableFrom(
+                ((GenericArrayType) responseType).getGenericComponentType());
     }
 
     protected boolean isGenericArrayType(Type responseType) {
@@ -136,9 +135,8 @@ public abstract class AbstractResponseType<R> implements ResponseType<R> {
     }
 
     protected boolean isGenericAssignableFrom(Type responseType) {
-        return isTypeVariable(responseType) &&
-                Arrays.stream(((TypeVariable) responseType).getBounds())
-                      .anyMatch(this::isAssignableFrom);
+        return isTypeVariable(responseType) && Arrays.stream(((TypeVariable) responseType).getBounds())
+                .anyMatch(this::isAssignableFrom);
     }
 
     protected boolean isTypeVariable(Type responseType) {
@@ -147,6 +145,11 @@ public abstract class AbstractResponseType<R> implements ResponseType<R> {
 
     protected boolean isAssignableFrom(Type responseType) {
         return responseType instanceof Class && expectedResponseType.isAssignableFrom((Class) responseType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(expectedResponseType);
     }
 
     @Override
@@ -161,8 +164,4 @@ public abstract class AbstractResponseType<R> implements ResponseType<R> {
         return Objects.equals(expectedResponseType, that.expectedResponseType);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(expectedResponseType);
-    }
 }

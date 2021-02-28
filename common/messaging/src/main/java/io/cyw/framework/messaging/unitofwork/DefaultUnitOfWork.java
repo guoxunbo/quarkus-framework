@@ -40,6 +40,15 @@ public class DefaultUnitOfWork<T extends Message<?>> extends AbstractUnitOfWork<
     private final MessageProcessingContext<T> processingContext;
 
     /**
+     * Initializes a Unit of Work (without starting it).
+     *
+     * @param message the message that will be processed in the context of the unit of work
+     */
+    public DefaultUnitOfWork(T message) {
+        processingContext = new MessageProcessingContext<>(message);
+    }
+
+    /**
      * Starts a new DefaultUnitOfWork instance, registering it a CurrentUnitOfWork. This methods returns the started
      * UnitOfWork instance.
      * <p>
@@ -55,13 +64,27 @@ public class DefaultUnitOfWork<T extends Message<?>> extends AbstractUnitOfWork<
         return uow;
     }
 
-    /**
-     * Initializes a Unit of Work (without starting it).
-     *
-     * @param message the message that will be processed in the context of the unit of work
-     */
-    public DefaultUnitOfWork(T message) {
-        processingContext = new MessageProcessingContext<>(message);
+    @Override
+    protected void notifyHandlers(Phase phase) {
+        processingContext.notifyHandlers(this, phase);
+    }
+
+    @Override
+    protected void addHandler(Phase phase, Consumer<UnitOfWork<T>> handler) {
+        Assert.state(!phase.isBefore(phase()),
+                     () -> "Cannot register a listener for phase: " + phase + " because the Unit of Work is already in a later phase: " + phase());
+        processingContext.addHandler(phase, handler);
+    }
+
+    @Override
+    public T getMessage() {
+        return processingContext.getMessage();
+    }
+
+    @Override
+    public UnitOfWork<T> transformMessage(Function<T, ? extends Message<?>> transformOperator) {
+        processingContext.transformMessage(transformOperator);
+        return this;
     }
 
     @Override
@@ -69,7 +92,8 @@ public class DefaultUnitOfWork<T extends Message<?>> extends AbstractUnitOfWork<
         if (phase() == Phase.NOT_STARTED) {
             start();
         }
-        Assert.state(phase() == Phase.STARTED, () -> String.format("The UnitOfWork has an incompatible phase: %s", phase()));
+        Assert.state(phase() == Phase.STARTED,
+                     () -> String.format("The UnitOfWork has an incompatible phase: %s", phase()));
         R result;
         ResultMessage<R> resultMessage;
         try {
@@ -77,7 +101,7 @@ public class DefaultUnitOfWork<T extends Message<?>> extends AbstractUnitOfWork<
             if (result instanceof ResultMessage) {
                 //noinspection Duplicates
                 resultMessage = (ResultMessage<R>) result;
-            } else if(result instanceof Message) {
+            } else if (result instanceof Message) {
                 resultMessage = new GenericResultMessage<>(result, ((Message) result).getMetaData());
             } else {
                 resultMessage = new GenericResultMessage<>(result);
@@ -99,34 +123,6 @@ public class DefaultUnitOfWork<T extends Message<?>> extends AbstractUnitOfWork<
     }
 
     @Override
-    protected void setRollbackCause(Throwable cause) {
-        setExecutionResult(new ExecutionResult(new GenericResultMessage<>(cause)));
-    }
-
-    @Override
-    protected void notifyHandlers(Phase phase) {
-        processingContext.notifyHandlers(this, phase);
-    }
-
-    @Override
-    protected void addHandler(Phase phase, Consumer<UnitOfWork<T>> handler) {
-        Assert.state(!phase.isBefore(phase()), () -> "Cannot register a listener for phase: " + phase
-                + " because the Unit of Work is already in a later phase: " + phase());
-        processingContext.addHandler(phase, handler);
-    }
-
-    @Override
-    public T getMessage() {
-        return processingContext.getMessage();
-    }
-
-    @Override
-    public UnitOfWork<T> transformMessage(Function<T, ? extends Message<?>> transformOperator) {
-        processingContext.transformMessage(transformOperator);
-        return this;
-    }
-
-    @Override
     public ExecutionResult getExecutionResult() {
         return processingContext.getExecutionResult();
     }
@@ -135,4 +131,10 @@ public class DefaultUnitOfWork<T extends Message<?>> extends AbstractUnitOfWork<
     protected void setExecutionResult(ExecutionResult executionResult) {
         processingContext.setExecutionResult(executionResult);
     }
+
+    @Override
+    protected void setRollbackCause(Throwable cause) {
+        setExecutionResult(new ExecutionResult(new GenericResultMessage<>(cause)));
+    }
+
 }

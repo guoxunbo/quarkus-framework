@@ -26,4 +26,5 @@ import java.lang.annotation.*;
 @Documented
 @Nonnull(when = When.MAYBE)
 @TypeQualifierNickname
-public @interface Nullable {}
+public @interface Nullable {
+}

@@ -39,8 +39,7 @@ import java.util.stream.Stream;
  * @author Allard Buijze
  * @since 3.1
  */
-public interface QueryBus extends MessageHandlerInterceptorSupport<QueryMessage<?, ?>>,
-        MessageDispatchInterceptorSupport<QueryMessage<?, ?>> {
+public interface QueryBus extends MessageHandlerInterceptorSupport<QueryMessage<?, ?>>, MessageDispatchInterceptorSupport<QueryMessage<?, ?>> {
 
     /**
      * Subscribe the given {@code handler} to queries with the given {@code queryName} and {@code responseType}.
@@ -112,9 +111,7 @@ public interface QueryBus extends MessageHandlerInterceptorSupport<QueryMessage<
      * @param <U>   the incremental response types of the query
      * @return query result containing initial result and incremental updates
      */
-    default <Q, I, U> SubscriptionQueryResult<QueryResponseMessage<I>, SubscriptionQueryUpdateMessage<U>> subscriptionQuery(
-            SubscriptionQueryMessage<Q, I, U> query
-    ) {
+    default <Q, I, U> SubscriptionQueryResult<QueryResponseMessage<I>, SubscriptionQueryUpdateMessage<U>> subscriptionQuery(SubscriptionQueryMessage<Q, I, U> query) {
         return subscriptionQuery(query, Queues.BUFFER_S);
     }
 
@@ -139,17 +136,16 @@ public interface QueryBus extends MessageHandlerInterceptorSupport<QueryMessage<
      * @param <U>              the incremental response types of the query
      * @return query result containing initial result and incremental updates
      */
-    default <Q, I, U> SubscriptionQueryResult<QueryResponseMessage<I>, SubscriptionQueryUpdateMessage<U>> subscriptionQuery(
-            SubscriptionQueryMessage<Q, I, U> query, int updateBufferSize
-    ) {
+    default <Q, I, U> SubscriptionQueryResult<QueryResponseMessage<I>, SubscriptionQueryUpdateMessage<U>> subscriptionQuery(SubscriptionQueryMessage<Q, I, U> query, int updateBufferSize) {
         return new SubscriptionQueryResult<QueryResponseMessage<I>, SubscriptionQueryUpdateMessage<U>>() {
 
             @Override
             public Uni<QueryResponseMessage<I>> initialResult() {
-              return   Uni.createFrom().emitter(uniEmitter -> query(query).thenAccept(uniEmitter::complete).exceptionally(t -> {
-                  uniEmitter.fail(t);
-                    return null;
-                }));
+                return Uni.createFrom()
+                        .emitter(uniEmitter -> query(query).thenAccept(uniEmitter::complete).exceptionally(t -> {
+                            uniEmitter.fail(t);
+                            return null;
+                        }));
             }
 
             @Override
@@ -170,4 +166,5 @@ public interface QueryBus extends MessageHandlerInterceptorSupport<QueryMessage<
      * @return the associated {@link QueryUpdateEmitter}
      */
     QueryUpdateEmitter queryUpdateEmitter();
+
 }

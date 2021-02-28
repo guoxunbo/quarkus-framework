@@ -24,6 +24,7 @@ import java.util.Optional;
 public class ConvertingResponseMessage<R> implements QueryResponseMessage<R> {
 
     private final ResponseType<R> expectedResponseType;
+
     private final QueryResponseMessage<?> responseMessage;
 
     /**
@@ -33,25 +34,9 @@ public class ConvertingResponseMessage<R> implements QueryResponseMessage<R> {
      * @param expectedResponseType an instance describing the expected response type
      * @param responseMessage      the message containing the actual response from the handler
      */
-    public ConvertingResponseMessage(ResponseType<R> expectedResponseType,
-                                     QueryResponseMessage<?> responseMessage) {
+    public ConvertingResponseMessage(ResponseType<R> expectedResponseType, QueryResponseMessage<?> responseMessage) {
         this.expectedResponseType = expectedResponseType;
         this.responseMessage = responseMessage;
-    }
-
-    @Override
-    public <S> SerializedObject<S> serializePayload(Serializer serializer, Class<S> expectedRepresentation) {
-        return responseMessage.serializePayload(serializer, expectedRepresentation);
-    }
-
-    @Override
-    public <T> SerializedObject<T> serializeExceptionResult(Serializer serializer, Class<T> expectedRepresentation) {
-        return responseMessage.serializeExceptionResult(serializer, expectedRepresentation);
-    }
-
-    @Override
-    public <R1> SerializedObject<R1> serializeMetaData(Serializer serializer, Class<R1> expectedRepresentation) {
-        return responseMessage.serializeMetaData(serializer, expectedRepresentation);
     }
 
     @Override
@@ -62,6 +47,16 @@ public class ConvertingResponseMessage<R> implements QueryResponseMessage<R> {
     @Override
     public Optional<Throwable> optionalExceptionResult() {
         return responseMessage.optionalExceptionResult();
+    }
+
+    @Override
+    public <T> SerializedObject<T> serializeExceptionResult(Serializer serializer, Class<T> expectedRepresentation) {
+        return responseMessage.serializeExceptionResult(serializer, expectedRepresentation);
+    }
+
+    @Override
+    public <S> SerializedObject<S> serializePayload(Serializer serializer, Class<S> expectedRepresentation) {
+        return responseMessage.serializePayload(serializer, expectedRepresentation);
     }
 
     @Override
@@ -78,10 +73,8 @@ public class ConvertingResponseMessage<R> implements QueryResponseMessage<R> {
     public R getPayload() {
         if (isExceptional()) {
             throw new IllegalPayloadAccessException(
-                    "This result completed exceptionally, payload is not available. "
-                            + "Try calling 'exceptionResult' to see the cause of failure.",
-                    optionalExceptionResult().orElse(null)
-            );
+                    "This result completed exceptionally, payload is not available. " + "Try calling 'exceptionResult' to see the cause of failure.",
+                    optionalExceptionResult().orElse(null));
         }
         return expectedResponseType.convert(responseMessage.getPayload());
     }
@@ -89,6 +82,11 @@ public class ConvertingResponseMessage<R> implements QueryResponseMessage<R> {
     @Override
     public Class<R> getPayloadType() {
         return expectedResponseType.responseMessagePayloadType();
+    }
+
+    @Override
+    public <R1> SerializedObject<R1> serializeMetaData(Serializer serializer, Class<R1> expectedRepresentation) {
+        return responseMessage.serializeMetaData(serializer, expectedRepresentation);
     }
 
     @Override
@@ -100,4 +98,5 @@ public class ConvertingResponseMessage<R> implements QueryResponseMessage<R> {
     public QueryResponseMessage<R> andMetaData(Map<String, ?> additionalMetaData) {
         return new ConvertingResponseMessage<>(expectedResponseType, responseMessage.andMetaData(additionalMetaData));
     }
+
 }

@@ -36,10 +36,15 @@ import java.util.function.Consumer;
 public abstract class AbstractUnitOfWork<T extends Message<?>> implements UnitOfWork<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractUnitOfWork.class);
+
     private final Map<String, Object> resources = new HashMap<>();
+
     private final Collection<CorrelationDataProvider> correlationDataProviders = new LinkedHashSet<>();
+
     private UnitOfWork<?> parentUnitOfWork;
+
     private Phase phase = Phase.NOT_STARTED;
+
     private boolean rolledBack;
 
     @Override
@@ -64,7 +69,8 @@ public abstract class AbstractUnitOfWork<T extends Message<?>> implements UnitOf
         if (logger.isDebugEnabled()) {
             logger.debug("Committing Unit Of Work");
         }
-        Assert.state(phase() == Phase.STARTED, () -> String.format("The UnitOfWork is in an incompatible phase: %s", phase()));
+        Assert.state(phase() == Phase.STARTED,
+                     () -> String.format("The UnitOfWork is in an incompatible phase: %s", phase()));
         Assert.state(isCurrent(), () -> "The UnitOfWork is not the current Unit of Work");
         try {
             if (isRoot()) {
@@ -75,6 +81,90 @@ public abstract class AbstractUnitOfWork<T extends Message<?>> implements UnitOf
         } finally {
             CurrentUnitOfWork.clear(this);
         }
+    }
+
+    @Override
+    public void rollback(Throwable cause) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Rolling back Unit Of Work.", cause);
+        }
+        Assert.state(isActive() && phase().isBefore(Phase.ROLLBACK),
+                     () -> String.format("The UnitOfWork is in an incompatible phase: %s", phase()));
+        Assert.state(isCurrent(), () -> "The UnitOfWork is not the current Unit of Work");
+        try {
+            setRollbackCause(cause);
+            changePhase(Phase.ROLLBACK);
+            if (isRoot()) {
+                changePhase(Phase.CLEANUP, Phase.CLOSED);
+            }
+        } finally {
+            CurrentUnitOfWork.clear(this);
+        }
+    }
+
+    @Override
+    public boolean isRolledBack() {
+        return rolledBack;
+    }
+
+    @Override
+    public Phase phase() {
+        return phase;
+    }
+
+    @Override
+    public void onPrepareCommit(Consumer<UnitOfWork<T>> handler) {
+        addHandler(Phase.PREPARE_COMMIT, handler);
+    }
+
+    @Override
+    public void onCommit(Consumer<UnitOfWork<T>> handler) {
+        addHandler(Phase.COMMIT, handler);
+    }
+
+    @Override
+    public void afterCommit(Consumer<UnitOfWork<T>> handler) {
+        addHandler(Phase.AFTER_COMMIT, handler);
+    }
+
+    @Override
+    public void onRollback(Consumer<UnitOfWork<T>> handler) {
+        addHandler(Phase.ROLLBACK, handler);
+    }
+
+    @Override
+    public void onCleanup(Consumer<UnitOfWork<T>> handler) {
+        addHandler(Phase.CLEANUP, handler);
+    }
+
+    @Override
+    public Optional<UnitOfWork<?>> parent() {
+        return Optional.ofNullable(parentUnitOfWork);
+    }
+
+    @Override
+    public MetaData getCorrelationData() {
+        if (correlationDataProviders.isEmpty()) {
+            return MetaData.emptyInstance();
+        }
+        Map<String, Object> result = new HashMap<>();
+        for (CorrelationDataProvider correlationDataProvider : correlationDataProviders) {
+            final Map<String, ?> extraData = correlationDataProvider.correlationDataFor(getMessage());
+            if (extraData != null) {
+                result.putAll(extraData);
+            }
+        }
+        return MetaData.from(result);
+    }
+
+    @Override
+    public void registerCorrelationDataProvider(CorrelationDataProvider correlationDataProvider) {
+        correlationDataProviders.add(correlationDataProvider);
+    }
+
+    @Override
+    public Map<String, Object> resources() {
+        return resources;
     }
 
     private void commitAsRoot() {
@@ -113,90 +203,6 @@ public abstract class AbstractUnitOfWork<T extends Message<?>> implements UnitOf
         } else {
             changePhase(Phase.AFTER_COMMIT);
         }
-    }
-
-    @Override
-    public void rollback(Throwable cause) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Rolling back Unit Of Work.", cause);
-        }
-        Assert.state(isActive() && phase().isBefore(Phase.ROLLBACK),
-                     () -> String.format("The UnitOfWork is in an incompatible phase: %s", phase()));
-        Assert.state(isCurrent(), () -> "The UnitOfWork is not the current Unit of Work");
-        try {
-            setRollbackCause(cause);
-            changePhase(Phase.ROLLBACK);
-            if (isRoot()) {
-                changePhase(Phase.CLEANUP, Phase.CLOSED);
-            }
-        } finally {
-            CurrentUnitOfWork.clear(this);
-        }
-    }
-
-    @Override
-    public Optional<UnitOfWork<?>> parent() {
-        return Optional.ofNullable(parentUnitOfWork);
-    }
-
-    @Override
-    public Map<String, Object> resources() {
-        return resources;
-    }
-
-    @Override
-    public boolean isRolledBack() {
-        return rolledBack;
-    }
-
-    @Override
-    public void registerCorrelationDataProvider(CorrelationDataProvider correlationDataProvider) {
-        correlationDataProviders.add(correlationDataProvider);
-    }
-
-    @Override
-    public MetaData getCorrelationData() {
-        if (correlationDataProviders.isEmpty()) {
-            return MetaData.emptyInstance();
-        }
-        Map<String, Object> result = new HashMap<>();
-        for (CorrelationDataProvider correlationDataProvider : correlationDataProviders) {
-            final Map<String, ?> extraData = correlationDataProvider.correlationDataFor(getMessage());
-            if (extraData != null) {
-                result.putAll(extraData);
-            }
-        }
-        return MetaData.from(result);
-    }
-
-    @Override
-    public void onPrepareCommit(Consumer<UnitOfWork<T>> handler) {
-        addHandler(Phase.PREPARE_COMMIT, handler);
-    }
-
-    @Override
-    public void onCommit(Consumer<UnitOfWork<T>> handler) {
-        addHandler(Phase.COMMIT, handler);
-    }
-
-    @Override
-    public void afterCommit(Consumer<UnitOfWork<T>> handler) {
-        addHandler(Phase.AFTER_COMMIT, handler);
-    }
-
-    @Override
-    public void onRollback(Consumer<UnitOfWork<T>> handler) {
-        addHandler(Phase.ROLLBACK, handler);
-    }
-
-    @Override
-    public void onCleanup(Consumer<UnitOfWork<T>> handler) {
-        addHandler(Phase.CLEANUP, handler);
-    }
-
-    @Override
-    public Phase phase() {
-        return phase;
     }
 
     /**
@@ -262,4 +268,5 @@ public abstract class AbstractUnitOfWork<T extends Message<?>> implements UnitOf
      * @param cause The cause for rolling back this Unit of Work
      */
     protected abstract void setRollbackCause(Throwable cause);
+
 }

@@ -45,6 +45,10 @@ public abstract class TypeReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TypeReflectionUtils.class);
 
+    private TypeReflectionUtils() {
+        // Utility class
+    }
+
     /**
      * Finds the most specific supertype of <tt>type</tt> whose erasure is <tt>searchClass</tt>.
      * In other words, returns a type representing the class <tt>searchClass</tt> plus its exact type parameters in
@@ -128,9 +132,7 @@ public abstract class TypeReflectionUtils {
         }
 
         logger.debug(
-                type.getClass() + " is not supported for retrieving the exact direct super types from. Will by "
-                        + "default return the type contained in an Type[]"
-        );
+                type.getClass() + " is not supported for retrieving the exact direct super types from. Will by " + "default return the type contained in an Type[]");
         return new Type[]{type};
     }
 
@@ -145,8 +147,7 @@ public abstract class TypeReflectionUtils {
                 Type[] componentSupertypes = getExactDirectSuperTypes(typeComponent);
                 Type[] result = new Type[componentSupertypes.length + 3];
                 for (int resultIndex = 0; resultIndex < componentSupertypes.length; resultIndex++) {
-                    result[resultIndex] = Array.newInstance((Class<?>) componentSupertypes[resultIndex], 0)
-                            .getClass();
+                    result[resultIndex] = Array.newInstance((Class<?>) componentSupertypes[resultIndex], 0).getClass();
                 }
                 return result;
             }
@@ -217,15 +218,9 @@ public abstract class TypeReflectionUtils {
             return false;
         } else {
             logger.debug(
-                    type.getClass() + " is not supported for checking if there are missing type parameters. "
-                            + "Will by default return false."
-            );
+                    type.getClass() + " is not supported for checking if there are missing type parameters. " + "Will by default return false.");
             return false;
         }
-    }
-
-    private TypeReflectionUtils() {
-        // Utility class
     }
 
     /**
@@ -267,8 +262,7 @@ public abstract class TypeReflectionUtils {
             }
 
             logger.debug(
-                    type.getClass() + " is not supported for variable mapping. Will by default return the type as is."
-            );
+                    type.getClass() + " is not supported for variable mapping. Will by default return the type as is.");
             return type;
         }
 
@@ -279,17 +273,19 @@ public abstract class TypeReflectionUtils {
         private static class UnresolvedTypeVariableException extends RuntimeException {
 
             UnresolvedTypeVariableException(TypeVariable<?> tv) {
-                super("An exact type is requested, but the type contains a type variable that cannot be resolved.\n   "
-                              + "Variable: " + tv.getName() + " from " + tv.getGenericDeclaration() + "\n   "
-                              + "Hint: This is usually caused by trying to get an exact type when a generic method "
-                              + "who's type parameters are not given is involved.");
+                super("An exact type is requested, but the type contains a type variable that cannot be resolved.\n   " + "Variable: " + tv
+                        .getName() + " from " + tv
+                        .getGenericDeclaration() + "\n   " + "Hint: This is usually caused by trying to get an exact type when a generic method " + "who's type parameters are not given is involved.");
             }
+
         }
 
         private static class ParameterizedTypeImpl implements ParameterizedType {
 
             private final Class<?> rawType;
+
             private final Type[] actualTypeArguments;
+
             private final Type ownerType;
 
             ParameterizedTypeImpl(Class<?> rawType, Type[] actualTypeArguments, Type ownerType) {
@@ -298,17 +294,20 @@ public abstract class TypeReflectionUtils {
                 this.ownerType = ownerType;
             }
 
-            public Type getRawType() {
-                return rawType;
-            }
-
             public Type[] getActualTypeArguments() {
                 return actualTypeArguments;
+            }
+
+            public Type getRawType() {
+                return rawType;
             }
 
             public Type getOwnerType() {
                 return ownerType;
             }
+
         }
+
     }
+
 }

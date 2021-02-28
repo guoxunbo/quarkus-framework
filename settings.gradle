@@ -12,7 +12,7 @@ pluginManagement {
 //        id "${quarkusPluginId}" version "${quarkusPluginVersion}"
 //    }
 }
-rootProject.name='quarkus-framework'
+rootProject.name = 'quarkus-framework'
 
 include 'dependencies'
 include 'common:utils'

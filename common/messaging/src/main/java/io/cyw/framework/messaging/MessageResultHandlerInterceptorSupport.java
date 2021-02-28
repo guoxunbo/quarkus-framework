@@ -22,4 +22,5 @@ public interface MessageResultHandlerInterceptorSupport<M extends Message<?>, R 
      * @return a Registration, which may be used to unregister the interceptor
      */
     Registration registerResultHandlerInterceptor(MessageResultHandlerInterceptor<M, R> interceptor);
+
 }

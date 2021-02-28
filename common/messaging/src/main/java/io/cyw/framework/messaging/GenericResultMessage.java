@@ -145,14 +145,6 @@ public class GenericResultMessage<R> extends MessageDecorator<R> implements Resu
     }
 
     @Override
-    public <S> SerializedObject<S> serializePayload(Serializer serializer, Class<S> expectedRepresentation) {
-        if (isExceptional()) {
-            return serializer.serialize(exceptionDetails().orElse(null), expectedRepresentation);
-        }
-        return super.serializePayload(serializer, expectedRepresentation);
-    }
-
-    @Override
     public GenericResultMessage<R> withMetaData(Map<String, ?> metaData) {
         return new GenericResultMessage<>(getDelegate().withMetaData(metaData), exception);
     }
@@ -162,20 +154,30 @@ public class GenericResultMessage<R> extends MessageDecorator<R> implements Resu
         return new GenericResultMessage<>(getDelegate().andMetaData(metaData), exception);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public R getPayload() {
+        if (isExceptional()) {
+            throw new IllegalPayloadAccessException(
+                    "This result completed exceptionally, payload is not available. " + "Try calling 'exceptionResult' to see the cause of failure.",
+                    exception);
+        }
+        return super.getPayload();
+    }
+
+    @Override
+    public <S> SerializedObject<S> serializePayload(Serializer serializer, Class<S> expectedRepresentation) {
+        if (isExceptional()) {
+            return serializer.serialize(exceptionDetails().orElse(null), expectedRepresentation);
+        }
+        return super.serializePayload(serializer, expectedRepresentation);
+    }
+
     @Override
     protected void describeTo(StringBuilder stringBuilder) {
-        stringBuilder.append("payload={")
-                     .append(isExceptional() ? null : getPayload())
-                     .append('}')
-                     .append(", metadata={")
-                     .append(getMetaData())
-                     .append('}')
-                     .append(", messageIdentifier='")
-                     .append(getIdentifier())
-                     .append('\'')
-                     .append(", exception='")
-                     .append(exception)
-                     .append('\'');
+        stringBuilder.append("payload={").append(isExceptional() ? null : getPayload()).append('}')
+                .append(", metadata={").append(getMetaData()).append('}').append(", messageIdentifier='")
+                .append(getIdentifier()).append('\'').append(", exception='").append(exception).append('\'');
     }
 
     @Override
@@ -183,16 +185,4 @@ public class GenericResultMessage<R> extends MessageDecorator<R> implements Resu
         return "GenericResultMessage";
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public R getPayload() {
-        if (isExceptional()) {
-            throw new IllegalPayloadAccessException(
-                    "This result completed exceptionally, payload is not available. "
-                            + "Try calling 'exceptionResult' to see the cause of failure.",
-                    exception
-            );
-        }
-        return super.getPayload();
-    }
 }

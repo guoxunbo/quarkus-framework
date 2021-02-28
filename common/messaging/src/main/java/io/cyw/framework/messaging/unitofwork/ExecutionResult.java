@@ -67,20 +67,23 @@ public class ExecutionResult {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ExecutionResult that = (ExecutionResult) o;
-        return Objects.equals(result, that.result);
+    public int hashCode() {
+        return Objects.hash(result);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(result);
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ExecutionResult that = (ExecutionResult) o;
+        return Objects.equals(result, that.result);
     }
 
     @Override
     public String toString() {
         return String.format("ExecutionResult containing [%s]", result);
     }
+
 }

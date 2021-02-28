@@ -42,7 +42,6 @@ public interface SerializedType {
      * @param serializedType the type to check whether it equals {@link SerializedType#emptyType()}
      * @return {@code true} if the {@code serializedType} does equals the {@link SerializedType#emptyType()#getName()}
      * and {@code false} if it does
-     *
      * @throws NullPointerException if the given {@link SerializedType} is {@code null}
      */
     static boolean isEmptyType(SerializedType serializedType) {
@@ -64,4 +63,5 @@ public interface SerializedType {
      * @return the revision identifier of the serialized object
      */
     String getRevision();
+
 }

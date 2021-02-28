@@ -72,4 +72,5 @@ public interface SubscriptionQueryResult<I, U> extends Registration {
             }
         }, t -> cancel());
     }
+
 }

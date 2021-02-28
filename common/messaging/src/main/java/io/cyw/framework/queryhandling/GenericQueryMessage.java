@@ -38,6 +38,7 @@ public class GenericQueryMessage<T, R> extends MessageDecorator<T> implements Qu
     private static final long serialVersionUID = -3908412412867063631L;
 
     private final String queryName;
+
     private final ResponseType<R> responseType;
 
     /**
@@ -99,16 +100,13 @@ public class GenericQueryMessage<T, R> extends MessageDecorator<T> implements Qu
     @Override
     protected void describeTo(StringBuilder stringBuilder) {
         super.describeTo(stringBuilder);
-        stringBuilder.append(", queryName='")
-                     .append(getQueryName())
-                     .append('\'')
-                     .append(", expectedResponseType='")
-                     .append(getResponseType())
-                     .append('\'');
+        stringBuilder.append(", queryName='").append(getQueryName()).append('\'').append(", expectedResponseType='")
+                .append(getResponseType()).append('\'');
     }
 
     @Override
     protected String describeType() {
         return "GenericQueryMessage";
     }
+
 }

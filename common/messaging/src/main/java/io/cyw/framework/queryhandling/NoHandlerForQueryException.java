@@ -36,4 +36,5 @@ public class NoHandlerForQueryException extends SystemNonTransientException {
     public NoHandlerForQueryException(String message) {
         super(message);
     }
+
 }

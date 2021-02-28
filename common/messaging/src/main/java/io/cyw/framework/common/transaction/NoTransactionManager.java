@@ -30,6 +30,18 @@ public enum NoTransactionManager implements TransactionManager {
      */
     INSTANCE;
 
+    private static final Transaction TRANSACTION = new Transaction() {
+        @Override
+        public void commit() {
+            //no op
+        }
+
+        @Override
+        public void rollback() {
+            //no op
+        }
+    };
+
     /**
      * Returns the singleton instance of this TransactionManager
      *
@@ -43,16 +55,4 @@ public enum NoTransactionManager implements TransactionManager {
     public Transaction startTransaction() {
         return TRANSACTION;
     }
-
-    private static final Transaction TRANSACTION = new Transaction() {
-        @Override
-        public void commit() {
-            //no op
-        }
-
-        @Override
-        public void rollback() {
-            //no op
-        }
-    };
 }

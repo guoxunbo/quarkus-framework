@@ -36,26 +36,14 @@ import java.util.Map;
 public class GenericMessage<T> extends AbstractMessage<T> {
 
     private static final long serialVersionUID = 7937214711724527316L;
-    private final MetaData metaData;
-    private final Class<T> payloadType;
-    private final T payload;
-    private transient volatile SerializedObjectHolder serializedObjectHolder;
 
-    /**
-     * Returns a Message representing the given {@code payloadOrMessage}, either by wrapping it or by returning it
-     * as-is. If the given {@code payloadOrMessage} already implements {@link Message}, it is returned as-is, otherwise
-     * a {@link Message} is returned with the parameter as its payload.
-     *
-     * @param payloadOrMessage The payload to wrap or message to return
-     * @return a Message with the given payload or the message
-     */
-    public static Message<?> asMessage(Object payloadOrMessage) {
-        if (payloadOrMessage instanceof Message) {
-            return (Message<?>) payloadOrMessage;
-        } else {
-            return new GenericMessage<>(payloadOrMessage);
-        }
-    }
+    private final MetaData metaData;
+
+    private final Class<T> payloadType;
+
+    private final T payload;
+
+    private transient volatile SerializedObjectHolder serializedObjectHolder;
 
     /**
      * Constructs a Message for the given {@code payload} using the correlation data of the current Unit of Work, if
@@ -131,6 +119,22 @@ public class GenericMessage<T> extends AbstractMessage<T> {
     }
 
     /**
+     * Returns a Message representing the given {@code payloadOrMessage}, either by wrapping it or by returning it
+     * as-is. If the given {@code payloadOrMessage} already implements {@link Message}, it is returned as-is, otherwise
+     * a {@link Message} is returned with the parameter as its payload.
+     *
+     * @param payloadOrMessage The payload to wrap or message to return
+     * @return a Message with the given payload or the message
+     */
+    public static Message<?> asMessage(Object payloadOrMessage) {
+        if (payloadOrMessage instanceof Message) {
+            return (Message<?>) payloadOrMessage;
+        } else {
+            return new GenericMessage<>(payloadOrMessage);
+        }
+    }
+
+    /**
      * Extract the {@link Class} of the provided {@code payload}. If {@code payload == null} this function returns
      * {@link Void} as the payload type.
      *
@@ -158,11 +162,6 @@ public class GenericMessage<T> extends AbstractMessage<T> {
     }
 
     @Override
-    protected Message<T> withMetaData(MetaData metaData) {
-        return new GenericMessage<>(this, metaData);
-    }
-
-    @Override
     public <R> SerializedObject<R> serializePayload(Serializer serializer, Class<R> expectedRepresentation) {
         return serializedObjectHolder().serializePayload(serializer, expectedRepresentation);
     }
@@ -172,10 +171,16 @@ public class GenericMessage<T> extends AbstractMessage<T> {
         return serializedObjectHolder().serializeMetaData(serializer, expectedRepresentation);
     }
 
+    @Override
+    protected Message<T> withMetaData(MetaData metaData) {
+        return new GenericMessage<>(this, metaData);
+    }
+
     private SerializedObjectHolder serializedObjectHolder() {
         if (serializedObjectHolder == null) {
             serializedObjectHolder = new SerializedObjectHolder(this);
         }
         return serializedObjectHolder;
     }
+
 }

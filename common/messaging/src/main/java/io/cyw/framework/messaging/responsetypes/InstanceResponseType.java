@@ -72,4 +72,5 @@ public class InstanceResponseType<R> extends AbstractResponseType<R> {
     public String toString() {
         return "InstanceResponseType{" + expectedResponseType + "}";
     }
+
 }

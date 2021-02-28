@@ -62,4 +62,5 @@ public interface MessageHandler<T extends Message<?>> {
     default boolean canHandleType(Class<?> payloadType) {
         return true;
     }
+
 }

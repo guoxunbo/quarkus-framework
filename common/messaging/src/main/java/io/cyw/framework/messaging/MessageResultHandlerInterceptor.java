@@ -15,4 +15,5 @@ import io.smallrye.mutiny.Multi;
 public interface MessageResultHandlerInterceptor<M extends Message<?>, R extends ResultMessage<?>> {
 
     Multi<R> intercept(M message, Multi<R> results);
+
 }

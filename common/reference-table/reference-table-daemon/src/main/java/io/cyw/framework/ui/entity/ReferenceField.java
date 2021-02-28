@@ -18,157 +18,169 @@ public class ReferenceField {
     public static final Long DEFAULT_DISPLAY_LENGTH = 200L;
 
     public static final String DISPLAY_TYPE_TEXT = "text";
+
     public static final String DISPLAY_TYPE_PASSWORD = "password";
+
     public static final String DISPLAY_TYPE_INT = "int";
+
     public static final String DISPLAY_TYPE_DOUBLE = "double";
+
     public static final String DISPLAY_TYPE_CALENDAR = "calendar";
+
     public static final String DISPLAY_TYPE_CALENDAR_FROM_TO = "calendarFromTo";
+
     public static final String DISPLAY_TYPE_DATETIME = "datetime";
+
     public static final String DISPLAY_TYPE_DATETIME_FROM_TO = "datetimeFromTo";
+
     public static final String DISPLAY_TYPE_SYS_REF_LIST = "sysRefList";
+
     public static final String DISPLAY_TYPE_USER_REF_LIST = "userRefList";
+
     public static final String DISPLAY_TYPE_REF_TABLE = "referenceTable";
-    public static final String DISPLAY_TYPE_RADIO= "radio";
+
+    public static final String DISPLAY_TYPE_RADIO = "radio";
+
     public static final String DISPLAY_TYPE_FILE = "file";
 
-    @Column(name="NAME")
+    @Column(name = "NAME")
     private String name;
 
-    @Column(name="COLUMN_NAME")
+    @Column(name = "COLUMN_NAME")
     private String columnName;
 
-    @Column(name="DESCRIPTION")
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name="TABLE_RRN")
+    @Column(name = "TABLE_RRN")
     private String tableRrn;
 
-    @Column(name="TAB_RRN")
+    @Column(name = "TAB_RRN")
     private String tabRrn;
 
-    @Column(name="SEQ_NO")
+    @Column(name = "SEQ_NO")
     private Long seqNo;
 
     /**
      * 就支持100 150 200 250 300这些宽度
      */
-    @Column(name="DISPLAY_LENGTH")
+    @Column(name = "DISPLAY_LENGTH")
     private Long displayLength = DEFAULT_DISPLAY_LENGTH;
 
     /**
      * 栏位的显示类型
      * 如text、password、refTable等
      */
-    @Column(name="DISPLAY_TYPE")
+    @Column(name = "DISPLAY_TYPE")
     private String displayType;
 
     /**
      * 栏位输入值的命名规则
      * 正则表达式
      */
-    @Column(name="NAMING_RULE")
+    @Column(name = "NAMING_RULE")
     private String namingRule;
 
     /**
      * 是否是关键字。可以有多个联合，表示唯一值。在保存的时候会做验证
      */
-    @Column(name="KEY_FLAG")
+    @Column(name = "KEY_FLAG")
     private String keyFlag;
 
     /**
      * 是否允许负数
      */
-    @Column(name="NEGATIVE_FLAG")
+    @Column(name = "NEGATIVE_FLAG")
     private String negativeFlag;
 
     /**
      * 栏位所对应的参考表
      */
-    @Column(name="REF_TABLE_NAME")
+    @Column(name = "REF_TABLE_NAME")
     private String refTableName;
 
     /**
      * 栏位所对应的参考值名称
      */
-    @Column(name="REF_LIST_NAME")
+    @Column(name = "REF_LIST_NAME")
     private String refListName;
 
     /**
      * 栏位的参考规则 比如user.name
      */
-    @Column(name="REFERENCE_RULE")
+    @Column(name = "REFERENCE_RULE")
     private String referenceRule;
 
     /**
      * 栏位的默认值
      */
-    @Column(name="DEFAULT_VALUE")
+    @Column(name = "DEFAULT_VALUE")
     private String defaultValue;
 
     /**
      * 英文标签
      */
-    @Column(name="LABEL")
+    @Column(name = "LABEL")
     private String label;
 
     /**
      * 中文标签
      */
-    @Column(name="LABEL_ZH")
+    @Column(name = "LABEL_ZH")
     private String labelZh;
 
     /**
      * 其它语言标签
      */
-    @Column(name="LABEL_RES")
+    @Column(name = "LABEL_RES")
     private String labelRes;
 
     /**
      * 栏位是否显示
      */
-    @Column(name="DISPLAY_FLAG")
+    @Column(name = "DISPLAY_FLAG")
     private String displayFlag;
 
     /**
      * 栏位是否显示在基本信息中
      */
-    @Column(name="BASIC_FLAG")
+    @Column(name = "BASIC_FLAG")
     private String basicFlag;
 
     /**
      * 栏位是否在表格中显示->在表格中显示，即为导出模板栏位
      */
-    @Column(name="MAIN_FLAG")
+    @Column(name = "MAIN_FLAG")
     private String mainFlag;
 
     /**
      * 栏位是否是只读
      */
-    @Column(name="READONLY_FLAG")
+    @Column(name = "READONLY_FLAG")
     private String readonlyFlag;
 
     /**
      * 保存之后是否可编辑
      */
-    @Column(name="EDITABLE")
+    @Column(name = "EDITABLE")
     private String editable;
 
     /**
      * 是否占用整行
      */
-    @Column(name="ALL_LINE")
+    @Column(name = "ALL_LINE")
     private String allLine;
 
     /**
      * 必输
      */
-    @Column(name="REQUIRED_FLAG")
+    @Column(name = "REQUIRED_FLAG")
     private String requiredFlag;
 
     /**
      * 是否自动转换成大写
      */
-    @Column(name="UPPER_FLAG")
+    @Column(name = "UPPER_FLAG")
     private String upperFlag;
 
     /**
@@ -181,16 +193,16 @@ public class ReferenceField {
     /**
      * 是否是查询栏位
      */
-    @Column(name="QUERY_FLAG")
+    @Column(name = "QUERY_FLAG")
     private String queryFlag;
 
     /**
      * 是否是查询必须
      */
-    @Column(name="QUERY_REQUIRE_FLAG")
+    @Column(name = "QUERY_REQUIRE_FLAG")
     private String queryRequireFlag;
 
-    @Column(name="QUERY_LIKE_FLAG")
+    @Column(name = "QUERY_LIKE_FLAG")
     private String queryLikeFlag;
 
     public Boolean getDisplayFlag() {
@@ -304,4 +316,5 @@ public class ReferenceField {
     public void setKeyFlag(Boolean keyFlag) {
         this.keyFlag = keyFlag ? StringPool.YES : StringPool.NO;
     }
+
 }

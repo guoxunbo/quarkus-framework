@@ -28,50 +28,9 @@ import java.util.Map;
  * @author Milan Savic
  * @since 3.3
  */
-public class GenericSubscriptionQueryUpdateMessage<U> extends GenericResultMessage<U>
-        implements SubscriptionQueryUpdateMessage<U> {
+public class GenericSubscriptionQueryUpdateMessage<U> extends GenericResultMessage<U> implements SubscriptionQueryUpdateMessage<U> {
 
     private static final long serialVersionUID = 5872479410321475147L;
-
-    /**
-     * Creates {@link GenericSubscriptionQueryUpdateMessage} from provided {@code payload} which represents incremental
-     * update. The provided {@code payload} may not be {@code null}.
-     *
-     * @param payload incremental update
-     * @param <T>     type of the {@link GenericSubscriptionQueryUpdateMessage}
-     * @return created a {@link SubscriptionQueryUpdateMessage} with the given {@code payload}.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> SubscriptionQueryUpdateMessage<T> asUpdateMessage(Object payload) {
-        if (payload instanceof SubscriptionQueryUpdateMessage) {
-            return (SubscriptionQueryUpdateMessage<T>) payload;
-        } else if (payload instanceof ResultMessage) {
-            ResultMessage<T> resultMessage = (ResultMessage<T>) payload;
-            if (resultMessage.isExceptional()) {
-                Throwable cause = resultMessage.exceptionResult();
-                return new GenericSubscriptionQueryUpdateMessage<>(resultMessage.getPayloadType(),
-                                                                   cause,
-                                                                   resultMessage.getMetaData());
-            }
-            return new GenericSubscriptionQueryUpdateMessage<>(resultMessage);
-        } else if (payload instanceof Message) {
-            return new GenericSubscriptionQueryUpdateMessage<>((Message<T>) payload);
-        }
-        return new GenericSubscriptionQueryUpdateMessage<>((T) payload);
-    }
-
-    /**
-     * Creates a {@link GenericSubscriptionQueryUpdateMessage} with the given {@code declaredType} and {@code exception}
-     * result.
-     *
-     * @param declaredType The declared type of the Subscription Query Update Message to be created
-     * @param exception    The exception describing the cause of an error
-     * @param <T>          type of the {@link GenericSubscriptionQueryUpdateMessage}
-     * @return a message containing exception result
-     */
-    public static <T> SubscriptionQueryUpdateMessage<T> asUpdateMessage(Class<T> declaredType, Throwable exception) {
-        return new GenericSubscriptionQueryUpdateMessage<>(declaredType, exception, MetaData.emptyInstance());
-    }
 
     /**
      * Initializes {@link GenericSubscriptionQueryUpdateMessage} with incremental update.
@@ -127,6 +86,45 @@ public class GenericSubscriptionQueryUpdateMessage<U> extends GenericResultMessa
         super(delegate);
     }
 
+    /**
+     * Creates {@link GenericSubscriptionQueryUpdateMessage} from provided {@code payload} which represents incremental
+     * update. The provided {@code payload} may not be {@code null}.
+     *
+     * @param payload incremental update
+     * @param <T>     type of the {@link GenericSubscriptionQueryUpdateMessage}
+     * @return created a {@link SubscriptionQueryUpdateMessage} with the given {@code payload}.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> SubscriptionQueryUpdateMessage<T> asUpdateMessage(Object payload) {
+        if (payload instanceof SubscriptionQueryUpdateMessage) {
+            return (SubscriptionQueryUpdateMessage<T>) payload;
+        } else if (payload instanceof ResultMessage) {
+            ResultMessage<T> resultMessage = (ResultMessage<T>) payload;
+            if (resultMessage.isExceptional()) {
+                Throwable cause = resultMessage.exceptionResult();
+                return new GenericSubscriptionQueryUpdateMessage<>(resultMessage.getPayloadType(), cause,
+                                                                   resultMessage.getMetaData());
+            }
+            return new GenericSubscriptionQueryUpdateMessage<>(resultMessage);
+        } else if (payload instanceof Message) {
+            return new GenericSubscriptionQueryUpdateMessage<>((Message<T>) payload);
+        }
+        return new GenericSubscriptionQueryUpdateMessage<>((T) payload);
+    }
+
+    /**
+     * Creates a {@link GenericSubscriptionQueryUpdateMessage} with the given {@code declaredType} and {@code exception}
+     * result.
+     *
+     * @param declaredType The declared type of the Subscription Query Update Message to be created
+     * @param exception    The exception describing the cause of an error
+     * @param <T>          type of the {@link GenericSubscriptionQueryUpdateMessage}
+     * @return a message containing exception result
+     */
+    public static <T> SubscriptionQueryUpdateMessage<T> asUpdateMessage(Class<T> declaredType, Throwable exception) {
+        return new GenericSubscriptionQueryUpdateMessage<>(declaredType, exception, MetaData.emptyInstance());
+    }
+
     @Override
     public GenericSubscriptionQueryUpdateMessage<U> withMetaData(Map<String, ?> metaData) {
         return new GenericSubscriptionQueryUpdateMessage<>(getDelegate().withMetaData(metaData));
@@ -141,4 +139,5 @@ public class GenericSubscriptionQueryUpdateMessage<U> extends GenericResultMessa
     protected String describeType() {
         return "GenericSubscriptionQueryUpdateMessage";
     }
+
 }

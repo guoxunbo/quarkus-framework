@@ -30,7 +30,6 @@ import java.lang.reflect.Type;
  * If this match returns true, it signals the found query handler can handle the intended query.
  * As a follow up, the response retrieved from a query handler should move through the
  * {@link ResponseType#convert(Object)} function to guarantee the right response type is returned.
- *
  */
 public interface ResponseType<R> extends Serializable {
 
@@ -82,4 +81,5 @@ public interface ResponseType<R> extends Serializable {
     default ResponseType<?> forSerialization() {
         return this;
     }
+
 }

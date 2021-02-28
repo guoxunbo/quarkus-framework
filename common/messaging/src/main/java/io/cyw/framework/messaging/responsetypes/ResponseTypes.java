@@ -27,6 +27,10 @@ import java.util.Optional;
  */
 public abstract class ResponseTypes {
 
+    private ResponseTypes() {
+        // Utility class
+    }
+
     /**
      * Specify the desire to retrieve a single instance of type {@code R} when performing a query.
      *
@@ -64,7 +68,4 @@ public abstract class ResponseTypes {
         return new MultipleInstancesResponseType<>(type);
     }
 
-    private ResponseTypes() {
-        // Utility class
-    }
 }

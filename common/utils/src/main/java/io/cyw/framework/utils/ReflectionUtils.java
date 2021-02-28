@@ -34,12 +34,14 @@ public abstract class ReflectionUtils {
      * A map of Primitive types to their respective wrapper types.
      */
     private static final Map<Type, Class<?>> primitiveWrapperTypeMap = new HashMap<>(8);
+
     private static final String UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE = "Unsupported member type [%s]";
 
     /**
      * Specifying a reflection operation should be performed recursive.
      */
     public static final boolean RECURSIVE = true;
+
     /**
      * Specifying a reflection operation should not be performed recursive.
      */
@@ -54,6 +56,10 @@ public abstract class ReflectionUtils {
         primitiveWrapperTypeMap.put(int.class, Integer.class);
         primitiveWrapperTypeMap.put(long.class, Long.class);
         primitiveWrapperTypeMap.put(short.class, Short.class);
+    }
+
+    private ReflectionUtils() {
+        // utility class
     }
 
     /**
@@ -185,9 +191,8 @@ public abstract class ReflectionUtils {
      * @see #ensureAccessible(AccessibleObject)
      */
     public static boolean isNonFinalPublicMember(Member member) {
-        return (Modifier.isPublic(member.getModifiers())
-                && Modifier.isPublic(member.getDeclaringClass().getModifiers())
-                && !Modifier.isFinal(member.getModifiers()));
+        return (Modifier.isPublic(member.getModifiers()) && Modifier
+                .isPublic(member.getDeclaringClass().getModifiers()) && !Modifier.isFinal(member.getModifiers()));
     }
 
     /**
@@ -235,8 +240,7 @@ public abstract class ReflectionUtils {
      * @throws NoSuchMethodException if no {@link Method} can be found matching the {@code methodName}
      *                               in {@code clazz}
      */
-    public static Method methodOf(Class<?> clazz, String methodName, Class<?>... parameterTypes)
-            throws NoSuchMethodException {
+    public static Method methodOf(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
         return clazz.getMethod(methodName, parameterTypes);
     }
 
@@ -358,8 +362,8 @@ public abstract class ReflectionUtils {
      */
     public static Optional<Class<?>> resolveGenericType(Field field, int genericTypeIndex) {
         final Type genericType = field.getGenericType();
-        if (!(genericType instanceof ParameterizedType)
-                || ((ParameterizedType) genericType).getActualTypeArguments().length <= genericTypeIndex) {
+        if (!(genericType instanceof ParameterizedType) || ((ParameterizedType) genericType)
+                .getActualTypeArguments().length <= genericTypeIndex) {
             return Optional.empty();
         }
         return Optional.of((Class<?>) ((ParameterizedType) genericType).getActualTypeArguments()[genericTypeIndex]);
@@ -374,8 +378,8 @@ public abstract class ReflectionUtils {
      */
     public static Optional<Class<?>> resolveMemberGenericType(Member member, int genericTypeIndex) {
         final Type genericType = getMemberGenericType(member);
-        if (!(genericType instanceof ParameterizedType)
-                || ((ParameterizedType) genericType).getActualTypeArguments().length <= genericTypeIndex) {
+        if (!(genericType instanceof ParameterizedType) || ((ParameterizedType) genericType)
+                .getActualTypeArguments().length <= genericTypeIndex) {
             return Optional.empty();
         }
         return Optional.of((Class<?>) ((ParameterizedType) genericType).getActualTypeArguments()[genericTypeIndex]);
@@ -418,8 +422,7 @@ public abstract class ReflectionUtils {
             return ReflectionUtils.invokeAndGetMethodValue((Method) member, target);
         }
         throw new IllegalStateException(
-                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName())
-        );
+                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName()));
     }
 
     /**
@@ -439,8 +442,7 @@ public abstract class ReflectionUtils {
             return field.getType();
         }
         throw new IllegalStateException(
-                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName())
-        );
+                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName()));
     }
 
     /**
@@ -458,8 +460,7 @@ public abstract class ReflectionUtils {
             return ((Method) member).getGenericReturnType();
         }
         throw new IllegalStateException(
-                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName())
-        );
+                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName()));
     }
 
     /**
@@ -476,11 +477,7 @@ public abstract class ReflectionUtils {
             return ((Executable) member).toGenericString();
         }
         throw new IllegalStateException(
-                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName())
-        );
+                String.format(UNSUPPORTED_MEMBER_TYPE_EXCEPTION_MESSAGE, member.getClass().getName()));
     }
 
-    private ReflectionUtils() {
-        // utility class
-    }
 }

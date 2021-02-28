@@ -42,4 +42,5 @@ public @interface MessageHandler {
      * be assignable to this type. Defaults to any {@link Object}.
      */
     Class<?> payloadType() default Object.class;
+
 }

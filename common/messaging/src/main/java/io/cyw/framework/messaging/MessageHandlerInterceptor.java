@@ -44,8 +44,8 @@ public interface MessageHandlerInterceptor<T extends Message<?>> {
      * @param unitOfWork       The UnitOfWork that is processing the message
      * @param interceptorChain The interceptor chain that allows this interceptor to proceed the dispatch process
      * @return the result of the message handler. May have been modified by interceptors.
-     *
      * @throws Exception any exception that occurs while handling the message
      */
     Object handle(UnitOfWork<? extends T> unitOfWork, InterceptorChain interceptorChain) throws Exception;
+
 }

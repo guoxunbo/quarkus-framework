@@ -49,7 +49,7 @@ public class OptionalResponseType<R> extends AbstractResponseType<Optional<R>> {
      * @param expectedResponseType the response type which is expected to be matched against and returned
      */
     @ConstructorProperties({"expectedResponseType"})
-    public OptionalResponseType( Class<R> expectedResponseType) {
+    public OptionalResponseType(Class<R> expectedResponseType) {
         super(expectedResponseType);
     }
 
@@ -91,4 +91,5 @@ public class OptionalResponseType<R> extends AbstractResponseType<Optional<R>> {
     public String toString() {
         return "OptionalResponseType{" + expectedResponseType + "}";
     }
+
 }

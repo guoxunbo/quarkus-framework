@@ -11,4 +11,5 @@ public class GetTableByNameQuery {
     public String getTableName() {
         return tableName;
     }
+
 }

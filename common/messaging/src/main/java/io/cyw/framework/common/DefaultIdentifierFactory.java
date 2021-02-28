@@ -39,4 +39,5 @@ public class DefaultIdentifierFactory extends IdentifierFactory {
     public String generateIdentifier() {
         return UUID.randomUUID().toString();
     }
+
 }

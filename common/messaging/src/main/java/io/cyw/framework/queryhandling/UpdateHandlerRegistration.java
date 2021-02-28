@@ -30,7 +30,9 @@ import io.smallrye.mutiny.Multi;
 public class UpdateHandlerRegistration<U> {
 
     private final Registration registration;
+
     private final Multi<SubscriptionQueryUpdateMessage<U>> updates;
+
     private final Runnable completeHandler;
 
     /**
@@ -40,9 +42,7 @@ public class UpdateHandlerRegistration<U> {
      * @param updates         used to subscribe to updates stream
      * @param completeHandler handler invoked on {@link #complete()}
      */
-    public UpdateHandlerRegistration(Registration registration,
-                                     Multi<SubscriptionQueryUpdateMessage<U>> updates,
-                                     Runnable completeHandler) {
+    public UpdateHandlerRegistration(Registration registration, Multi<SubscriptionQueryUpdateMessage<U>> updates, Runnable completeHandler) {
         this.registration = registration;
         this.updates = updates;
         this.completeHandler = completeHandler;
@@ -73,4 +73,5 @@ public class UpdateHandlerRegistration<U> {
     public void complete() {
         completeHandler.run();
     }
+
 }

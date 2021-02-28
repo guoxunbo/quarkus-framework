@@ -106,4 +106,5 @@ public interface Message<T> extends Serializable {
     default <R> SerializedObject<R> serializeMetaData(Serializer serializer, Class<R> expectedRepresentation) {
         return serializer.serialize(getMetaData(), expectedRepresentation);
     }
+
 }

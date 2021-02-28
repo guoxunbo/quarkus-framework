@@ -61,4 +61,5 @@ public interface SubscriptionQueryMessage<Q, I, U> extends QueryMessage<Q, I> {
      */
     @Override
     SubscriptionQueryMessage<Q, I, U> andMetaData(Map<String, ?> additionalMetaData);
+
 }

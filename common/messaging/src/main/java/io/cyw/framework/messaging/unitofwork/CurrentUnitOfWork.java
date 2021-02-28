@@ -28,11 +28,13 @@ import java.util.function.Function;
 /**
  * Default entry point to gain access to the current UnitOfWork. Components managing transactional boundaries can
  * register and clear UnitOfWork instances, which components can use.
- *
  */
 public abstract class CurrentUnitOfWork {
 
     private static final ThreadLocal<Deque<UnitOfWork<?>>> CURRENT = new ThreadLocal<>();
+
+    private CurrentUnitOfWork() {
+    }
 
     /**
      * Indicates whether a unit of work has already been started. This method can be used by interceptors to prevent
@@ -151,6 +153,4 @@ public abstract class CurrentUnitOfWork {
         return CurrentUnitOfWork.map(UnitOfWork::getCorrelationData).orElse(MetaData.emptyInstance());
     }
 
-    private CurrentUnitOfWork() {
-    }
 }

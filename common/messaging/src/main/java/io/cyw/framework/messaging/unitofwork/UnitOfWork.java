@@ -180,7 +180,9 @@ public interface UnitOfWork<T extends Message<?>> {
         CLOSED(false, true, true);
 
         private final boolean started;
+
         private final boolean reverseCallbackOrder;
+
         private final boolean suppressHandlerErrors;
 
         Phase(boolean started, boolean reverseCallbackOrder, boolean suppressHandlerErrors) {
@@ -226,7 +228,6 @@ public interface UnitOfWork<T extends Message<?>> {
          * Check if this Phase comes before given other {@code phase}.
          *
          * @param phase The other Phase
-         *
          * @return {@code true} if this comes before the given {@code phase}, {@code false} otherwise.
          */
         public boolean isBefore(Phase phase) {
@@ -243,4 +244,5 @@ public interface UnitOfWork<T extends Message<?>> {
             return ordinal() > phase.ordinal();
         }
     }
+
 }

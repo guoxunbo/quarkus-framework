@@ -32,75 +32,6 @@ public class GenericQueryResponseMessage<R> extends GenericResultMessage<R> impl
     private static final long serialVersionUID = -735698768536456937L;
 
     /**
-     * Creates a QueryResponseMessage for the given {@code result}. If result already implements QueryResponseMessage,
-     * it is returned directly. Otherwise a new QueryResponseMessage is created with the result as payload.
-     *
-     * @param result The result of a Query, to be wrapped in a QueryResponseMessage
-     * @param <R>    The type of response expected
-     * @return a QueryResponseMessage for the given {@code result}, or the result itself, if already a
-     * QueryResponseMessage.
-     */
-    @SuppressWarnings("unchecked")
-    public static <R> QueryResponseMessage<R> asResponseMessage(Object result) {
-        if (result instanceof QueryResponseMessage) {
-            return (QueryResponseMessage<R>) result;
-        } else if (result instanceof ResultMessage) {
-            ResultMessage<R> resultMessage = (ResultMessage<R>) result;
-            return new GenericQueryResponseMessage<>(resultMessage.getPayload(), resultMessage.getMetaData());
-        } else if (result instanceof Message) {
-            Message<R> message = (Message<R>) result;
-            return new GenericQueryResponseMessage<>(message.getPayload(), message.getMetaData());
-        } else {
-            return new GenericQueryResponseMessage<>((R) result);
-        }
-    }
-
-    /**
-     * Creates a QueryResponseMessage for the given {@code result} with a {@code declaredType} as the result type.
-     * Providing both the result type and the result allows the creation of a nullable response message, as the
-     * implementation does not have to check the type itself, which could result in a {@link
-     * NullPointerException}. If result already implements QueryResponseMessage, it is returned directly.
-     * Otherwise a new QueryResponseMessage is created with the declared type as the result type and the result as
-     * payload.
-     *
-     * @param declaredType The declared type of the Query Response Message to be created.
-     * @param result       The result of a Query, to be wrapped in a QueryResponseMessage
-     * @param <R>          The type of response expected
-     * @return a QueryResponseMessage for the given {@code result}, or the result itself, if already a
-     * QueryResponseMessage.
-     */
-    @SuppressWarnings("unchecked")
-    public static <R> QueryResponseMessage<R> asNullableResponseMessage(Class<R> declaredType, Object result) {
-        if (result instanceof QueryResponseMessage) {
-            return (QueryResponseMessage<R>) result;
-        } else if (result instanceof ResultMessage) {
-            ResultMessage<R> resultMessage = (ResultMessage<R>) result;
-            if (resultMessage.isExceptional()) {
-                Throwable cause = resultMessage.exceptionResult();
-                return new GenericQueryResponseMessage<>(declaredType, cause, resultMessage.getMetaData());
-            }
-            return new GenericQueryResponseMessage<>(resultMessage.getPayload(), resultMessage.getMetaData());
-        } else if (result instanceof Message) {
-            Message<R> message = (Message<R>) result;
-            return new GenericQueryResponseMessage<>(message.getPayload(), message.getMetaData());
-        } else {
-            return new GenericQueryResponseMessage<>(declaredType, (R) result);
-        }
-    }
-
-    /**
-     * Creates a Query Response Message with given {@code declaredType} and {@code exception}.
-     *
-     * @param declaredType The declared type of the Query Response Message to be created
-     * @param exception    The Exception describing the cause of an error
-     * @param <R>          The type of the payload
-     * @return a message containing exception result
-     */
-    public static <R> QueryResponseMessage<R> asResponseMessage(Class<R> declaredType, Throwable exception) {
-        return new GenericQueryResponseMessage<>(declaredType, exception);
-    }
-
-    /**
      * Initialize the response message with given {@code result}.
      *
      * @param result The result reported by the Query Handler, may not be {@code null}
@@ -192,6 +123,75 @@ public class GenericQueryResponseMessage<R> extends GenericResultMessage<R> impl
         super(delegate, exception);
     }
 
+    /**
+     * Creates a QueryResponseMessage for the given {@code result}. If result already implements QueryResponseMessage,
+     * it is returned directly. Otherwise a new QueryResponseMessage is created with the result as payload.
+     *
+     * @param result The result of a Query, to be wrapped in a QueryResponseMessage
+     * @param <R>    The type of response expected
+     * @return a QueryResponseMessage for the given {@code result}, or the result itself, if already a
+     * QueryResponseMessage.
+     */
+    @SuppressWarnings("unchecked")
+    public static <R> QueryResponseMessage<R> asResponseMessage(Object result) {
+        if (result instanceof QueryResponseMessage) {
+            return (QueryResponseMessage<R>) result;
+        } else if (result instanceof ResultMessage) {
+            ResultMessage<R> resultMessage = (ResultMessage<R>) result;
+            return new GenericQueryResponseMessage<>(resultMessage.getPayload(), resultMessage.getMetaData());
+        } else if (result instanceof Message) {
+            Message<R> message = (Message<R>) result;
+            return new GenericQueryResponseMessage<>(message.getPayload(), message.getMetaData());
+        } else {
+            return new GenericQueryResponseMessage<>((R) result);
+        }
+    }
+
+    /**
+     * Creates a QueryResponseMessage for the given {@code result} with a {@code declaredType} as the result type.
+     * Providing both the result type and the result allows the creation of a nullable response message, as the
+     * implementation does not have to check the type itself, which could result in a {@link
+     * NullPointerException}. If result already implements QueryResponseMessage, it is returned directly.
+     * Otherwise a new QueryResponseMessage is created with the declared type as the result type and the result as
+     * payload.
+     *
+     * @param declaredType The declared type of the Query Response Message to be created.
+     * @param result       The result of a Query, to be wrapped in a QueryResponseMessage
+     * @param <R>          The type of response expected
+     * @return a QueryResponseMessage for the given {@code result}, or the result itself, if already a
+     * QueryResponseMessage.
+     */
+    @SuppressWarnings("unchecked")
+    public static <R> QueryResponseMessage<R> asNullableResponseMessage(Class<R> declaredType, Object result) {
+        if (result instanceof QueryResponseMessage) {
+            return (QueryResponseMessage<R>) result;
+        } else if (result instanceof ResultMessage) {
+            ResultMessage<R> resultMessage = (ResultMessage<R>) result;
+            if (resultMessage.isExceptional()) {
+                Throwable cause = resultMessage.exceptionResult();
+                return new GenericQueryResponseMessage<>(declaredType, cause, resultMessage.getMetaData());
+            }
+            return new GenericQueryResponseMessage<>(resultMessage.getPayload(), resultMessage.getMetaData());
+        } else if (result instanceof Message) {
+            Message<R> message = (Message<R>) result;
+            return new GenericQueryResponseMessage<>(message.getPayload(), message.getMetaData());
+        } else {
+            return new GenericQueryResponseMessage<>(declaredType, (R) result);
+        }
+    }
+
+    /**
+     * Creates a Query Response Message with given {@code declaredType} and {@code exception}.
+     *
+     * @param declaredType The declared type of the Query Response Message to be created
+     * @param exception    The Exception describing the cause of an error
+     * @param <R>          The type of the payload
+     * @return a message containing exception result
+     */
+    public static <R> QueryResponseMessage<R> asResponseMessage(Class<R> declaredType, Throwable exception) {
+        return new GenericQueryResponseMessage<>(declaredType, exception);
+    }
+
     @Override
     public GenericQueryResponseMessage<R> withMetaData(Map<String, ?> metaData) {
         return new GenericQueryResponseMessage<>(getDelegate().withMetaData(metaData));
@@ -201,4 +201,5 @@ public class GenericQueryResponseMessage<R> extends GenericResultMessage<R> impl
     public GenericQueryResponseMessage<R> andMetaData(Map<String, ?> additionalMetaData) {
         return new GenericQueryResponseMessage<>(getDelegate().andMetaData(additionalMetaData));
     }
+
 }

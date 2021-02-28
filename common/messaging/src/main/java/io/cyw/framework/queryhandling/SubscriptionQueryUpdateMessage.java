@@ -35,4 +35,5 @@ public interface SubscriptionQueryUpdateMessage<U> extends ResultMessage<U> {
 
     @Override
     SubscriptionQueryUpdateMessage<U> andMetaData(Map<String, ?> metaData);
+
 }

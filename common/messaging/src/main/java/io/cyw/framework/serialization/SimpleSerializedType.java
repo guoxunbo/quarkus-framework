@@ -33,7 +33,9 @@ import static java.lang.String.format;
 public class SimpleSerializedType implements SerializedType {
 
     private static final SerializedType EMPTY_TYPE = new SimpleSerializedType("empty", null);
+
     private final String type;
+
     private final String revisionId;
 
     /**
@@ -43,7 +45,8 @@ public class SimpleSerializedType implements SerializedType {
      * @param revisionNumber The revision of the serialized object's type
      */
     public SimpleSerializedType(String objectType, String revisionNumber) {
-        Assert.notNull(objectType, I18nUtils.load().andThen(I18nUtils.args("objectType")).apply(ErrorMessage.COMMON_NULL));
+        Assert.notNull(objectType,
+                       I18nUtils.load().andThen(I18nUtils.args("objectType")).apply(ErrorMessage.COMMON_NULL));
         this.type = objectType;
         this.revisionId = revisionNumber;
     }
@@ -69,6 +72,11 @@ public class SimpleSerializedType implements SerializedType {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(type, revisionId);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -81,12 +89,8 @@ public class SimpleSerializedType implements SerializedType {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(type, revisionId);
-    }
-
-    @Override
     public String toString() {
         return format("SimpleSerializedType[%s] (revision %s)", type, revisionId);
     }
+
 }

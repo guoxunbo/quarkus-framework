@@ -40,4 +40,5 @@ public interface MessageDispatchInterceptorSupport<T extends Message<?>> {
      * @return a Registration, which may be used to remove the unregister the interceptor
      */
     Registration registerDispatchInterceptor(MessageDispatchInterceptor<? super T> dispatchInterceptor);
+
 }

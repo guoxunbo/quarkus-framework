@@ -35,4 +35,5 @@ public interface RollbackConfiguration {
      * @return {@code true} if the UnitOfWork should be rolled back, {@code false} otherwise
      */
     boolean rollBackOn(Throwable throwable);
+
 }

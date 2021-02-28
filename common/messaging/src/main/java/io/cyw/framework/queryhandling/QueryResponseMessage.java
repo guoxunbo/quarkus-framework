@@ -47,4 +47,5 @@ public interface QueryResponseMessage<T> extends ResultMessage<T> {
      * @return a copy of this message with the given additional MetaData
      */
     QueryResponseMessage<T> andMetaData(Map<String, ?> additionalMetaData);
+
 }

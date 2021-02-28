@@ -35,7 +35,9 @@ import java.util.stream.Stream;
 public class MetaData implements Map<String, Object>, Serializable {
 
     private static final long serialVersionUID = -7892913866303912970L;
+
     private static final MetaData EMPTY_META_DATA = new MetaData();
+
     private static final String UNSUPPORTED_MUTATION_MSG = "Metadata is immutable.";
 
     private final Map<String, Object> values;
@@ -124,6 +126,26 @@ public class MetaData implements Map<String, Object>, Serializable {
     }
 
     @Override
+    public int size() {
+        return values.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return values.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        return values.containsValue(value);
+    }
+
+    @Override
     public Object get(Object key) {
         return values.get(key);
     }
@@ -169,16 +191,6 @@ public class MetaData implements Map<String, Object>, Serializable {
     }
 
     @Override
-    public boolean containsKey(Object key) {
-        return values.containsKey(key);
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-        return values.containsValue(value);
-    }
-
-    @Override
     public Set<String> keySet() {
         return values.keySet();
     }
@@ -194,13 +206,8 @@ public class MetaData implements Map<String, Object>, Serializable {
     }
 
     @Override
-    public int size() {
-        return values.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return values.isEmpty();
+    public int hashCode() {
+        return values.hashCode();
     }
 
     @Override
@@ -218,8 +225,12 @@ public class MetaData implements Map<String, Object>, Serializable {
     }
 
     @Override
-    public int hashCode() {
-        return values.hashCode();
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        values.forEach((k, v) -> sb.append(", '").append(k).append("'->'").append(v).append('\''));
+        int skipInitialListingAppendString = 2;
+        // Only skip if the StringBuilder actual has a field, as otherwise we'll receive an IndexOutOfBoundsException
+        return values.isEmpty() ? sb.toString() : sb.substring(skipInitialListingAppendString);
     }
 
     /**
@@ -284,19 +295,6 @@ public class MetaData implements Map<String, Object>, Serializable {
         return this;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        values.forEach((k, v) -> sb.append(", '")
-                                   .append(k)
-                                   .append("'->'")
-                                   .append(v)
-                                   .append('\''));
-        int skipInitialListingAppendString = 2;
-        // Only skip if the StringBuilder actual has a field, as otherwise we'll receive an IndexOutOfBoundsException
-        return values.isEmpty() ? sb.toString() : sb.substring(skipInitialListingAppendString);
-    }
-
     /**
      * Collector implementation that, unlike {@link java.util.stream.Collectors#toMap(Function, Function)} allows
      * {@code null} values.
@@ -337,5 +335,7 @@ public class MetaData implements Map<String, Object>, Serializable {
         public Set<Characteristics> characteristics() {
             return Collections.emptySet();
         }
+
     }
+
 }

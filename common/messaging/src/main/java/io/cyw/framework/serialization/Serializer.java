@@ -62,7 +62,6 @@ public interface Serializer {
      * @param <S>              The data type of the serialized object
      * @param <T>              The expected deserialized type
      * @return the serialized object, cast to the expected type
-     *
      * @throws ClassCastException if the first object in the stream is not an instance of &lt;T&gt;.
      */
     <S, T> T deserialize(SerializedObject<S> serializedObject);
@@ -95,4 +94,5 @@ public interface Serializer {
      * @return the converter used by this Serializer
      */
     Converter getConverter();
+
 }

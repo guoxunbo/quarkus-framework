@@ -39,7 +39,7 @@ import java.util.function.Function;
  * @author Milan Savic
  * @since 3.1
  */
-public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMessage<?, ?>>, MessageResultHandlerInterceptorSupport<QueryMessage<?,?>, ResultMessage<?>> {
+public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMessage<?, ?>>, MessageResultHandlerInterceptorSupport<QueryMessage<?, ?>, ResultMessage<?>> {
 
     /**
      * Sends the given {@code query} over the {@link QueryBus}, expecting a response with the given {@code responseType}
@@ -114,7 +114,6 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param queries a {@link Publisher} stream of queries to be dispatched
      * @return a {@link Multi} of query results. The ordering of query results corresponds to the ordering of queries being
      * dispatched
-     *
      * @see #query(String, Object, ResponseType)
      * @see Multi#concatMap(Function)
      */
@@ -166,18 +165,15 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * sequentially. Once the result of Nth query arrives, the (N + 1)th query is dispatched. All queries will be dispatched
      * using given {@code timeout} and {@code timeUnit}.
      *
-     * @param queries  a {@link Publisher} stream of queries to be dispatched
-     * @param timeout  A timeout of {@code long} for the query
+     * @param queries a {@link Publisher} stream of queries to be dispatched
+     * @param timeout A timeout of {@code long} for the query
      * @return a {@link Multi} of query results. The ordering of query results corresponds to the ordering of queries
      * being dispatched
      * @see Multi#concatMap(Function)
      */
     default Multi<Object> scatterGather(Publisher<QueryMessage<?, ?>> queries, Duration timeout) {
         return Multi.createFrom().publisher(queries)
-                .concatMap(q -> scatterGather(q.getQueryName(),
-                        q.getPayload(),
-                        q.getResponseType(),
-                        timeout));
+                .concatMap(q -> scatterGather(q.getQueryName(), q.getPayload(), q.getResponseType(), timeout));
     }
 
     /**
@@ -195,14 +191,12 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <Q>        The type of the query
      * @param <R>        The type of the result (initial and updates)
      * @return Multi which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
     default <Q, R> Multi<R> subscriptionQuery(Q query, ResponseType<R> resultType) {
-        return subscriptionQuery(query,resultType,resultType).toMulti()
-                .flatMap(result -> result.initialResult()
-                        .onItem().transformToMulti(res -> result.updates())
-                        .onTermination().invoke((throwable, flag) -> result.close()));
+        return subscriptionQuery(query, resultType, resultType).toMulti().flatMap(
+                result -> result.initialResult().onItem().transformToMulti(res -> result.updates()).onTermination()
+                        .invoke((throwable, flag) -> result.close()));
     }
 
     /**
@@ -220,7 +214,6 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <Q>        The type of the query
      * @param <R>        The type of the result (initial and updates)
      * @return Multi which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
     default <Q, R> Multi<R> subscriptionQuery(Q query, Class<R> resultType) {
@@ -243,16 +236,14 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <Q>        The type of the query
      * @param <R>        The type of the result (initial and updates)
      * @return Multi which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
     default <Q, R> Multi<R> subscriptionQueryMany(Q query, Class<R> resultType) {
-        return subscriptionQuery(query,ResponseTypes.multipleInstancesOf(resultType),
-                ResponseTypes.instanceOf(resultType))
-                .onItem().transformToMulti(result -> result.initialResult()
-                .onItem().transformToMulti(Multi.createFrom()::iterable)
-                .onItem().transformToMultiAndConcatenate(s -> result.updates())
-                .onTermination().invoke((signal,flag) -> result.close()));
+        return subscriptionQuery(query, ResponseTypes.multipleInstancesOf(resultType),
+                                 ResponseTypes.instanceOf(resultType)).onItem().transformToMulti(
+                result -> result.initialResult().onItem().transformToMulti(Multi.createFrom()::iterable).onItem()
+                        .transformToMultiAndConcatenate(s -> result.updates()).onTermination()
+                        .invoke((signal, flag) -> result.close()));
     }
 
     /**
@@ -270,13 +261,11 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <Q>        The type of the query
      * @param <R>        The type of the result (updates)
      * @return Multi which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
     default <Q, R> Multi<R> queryUpdates(Q query, ResponseType<R> resultType) {
-        return subscriptionQuery(query, ResponseTypes.instanceOf(Void.class), resultType)
-                .onItem().transformToMulti(result -> result.updates()
-                        .onTermination().invoke((signal,flag) -> result.close()));
+        return subscriptionQuery(query, ResponseTypes.instanceOf(Void.class), resultType).onItem()
+                .transformToMulti(result -> result.updates().onTermination().invoke((signal, flag) -> result.close()));
     }
 
     /**
@@ -294,7 +283,6 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <Q>        The type of the query
      * @param <R>        The type of the result (updates)
      * @return Multi which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
     default <Q, R> Multi<R> queryUpdates(Q query, Class<R> resultType) {
@@ -318,15 +306,10 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <I>                 The type of the initial response
      * @param <U>                 The type of the incremental update
      * @return registration which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
-    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(Q query, Class<I> initialResponseType,
-                                                                            Class<U> updateResponseType) {
-        return subscriptionQuery(QueryMessage.queryName(query),
-                query,
-                initialResponseType,
-                updateResponseType);
+    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(Q query, Class<I> initialResponseType, Class<U> updateResponseType) {
+        return subscriptionQuery(QueryMessage.queryName(query), query, initialResponseType, updateResponseType);
     }
 
     /**
@@ -347,16 +330,11 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <I>                 The type of the initial response
      * @param <U>                 The type of the incremental update
      * @return registration which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
-    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(String queryName, Q query,
-                                                                            Class<I> initialResponseType,
-                                                                            Class<U> updateResponseType) {
-        return subscriptionQuery(queryName,
-                query,
-                ResponseTypes.instanceOf(initialResponseType),
-                ResponseTypes.instanceOf(updateResponseType));
+    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(String queryName, Q query, Class<I> initialResponseType, Class<U> updateResponseType) {
+        return subscriptionQuery(queryName, query, ResponseTypes.instanceOf(initialResponseType),
+                                 ResponseTypes.instanceOf(updateResponseType));
     }
 
     /**
@@ -376,16 +354,10 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <I>                 The type of the initial response
      * @param <U>                 The type of the incremental update
      * @return registration which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
-    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(Q query,
-                                                                            ResponseType<I> initialResponseType,
-                                                                            ResponseType<U> updateResponseType) {
-        return subscriptionQuery(QueryMessage.queryName(query),
-                query,
-                initialResponseType,
-                updateResponseType);
+    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(Q query, ResponseType<I> initialResponseType, ResponseType<U> updateResponseType) {
+        return subscriptionQuery(QueryMessage.queryName(query), query, initialResponseType, updateResponseType);
     }
 
     /**
@@ -406,17 +378,10 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <I>                 The type of the initial response
      * @param <U>                 The type of the incremental update
      * @return registration which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
-    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(String queryName, Q query,
-                                                                            ResponseType<I> initialResponseType,
-                                                                            ResponseType<U> updateResponseType) {
-        return subscriptionQuery(queryName,
-                query,
-                initialResponseType,
-                updateResponseType,
-                Queues.BUFFER_XS);
+    default <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(String queryName, Q query, ResponseType<I> initialResponseType, ResponseType<U> updateResponseType) {
+        return subscriptionQuery(queryName, query, initialResponseType, updateResponseType, Queues.BUFFER_XS);
     }
 
     /**
@@ -439,13 +404,9 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param <I>                 The type of the initial response
      * @param <U>                 The type of the incremental update
      * @return registration which can be used to cancel receiving updates
-     *
      * @see QueryBus#subscriptionQuery(SubscriptionQueryMessage)
      */
-    <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(String queryName, Q query,
-                                                                    ResponseType<I> initialResponseType,
-                                                                    ResponseType<U> updateResponseType,
-                                                                    int updateBufferSize);
+    <Q, I, U> Uni<SubscriptionQueryResult<I, U>> subscriptionQuery(String queryName, Q query, ResponseType<I> initialResponseType, ResponseType<U> updateResponseType, int updateBufferSize);
 
     /**
      * Uses the given {@link Publisher} of {@link SubscriptionQueryMessage}s to send incoming queries away. Queries will
@@ -454,32 +415,31 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      * @param queries a {@link Publisher} stream of queries to be dispatched
      * @return a {@link Multi} of query results. The ordering of query results corresponds to the ordering of queries
      * being dispatched
-     *
      * @see #subscriptionQuery(String, Object, Class, Class)
      * @see Multi#concatMap(Function)
      */
     default Multi<SubscriptionQueryResult<?, ?>> subscriptionQuery( // NOSONAR
-                                                                   Publisher<SubscriptionQueryMessage<?, ?, ?>> queries) {
+                                                                    Publisher<SubscriptionQueryMessage<?, ?, ?>> queries) {
         return subscriptionQuery(queries);
     }
 
-//    /**
-//     * Uses the given {@link Publisher} of {@link SubscriptionQueryMessage}s to send incoming queries away. Queries will
-//     * be sent sequentially. Once the result of Nth query arrives, the (N + 1)th query is dispatched. All queries will
-//     * be dispatched using the given {@code backpressure}.
-//     *
-//     * @param queries      a {@link Publisher} stream of queries to be dispatched
-//     * @param backpressure the backpressure mechanism to deal with producing of incremental updates
-//     * @return a {@link Multi} of query results. The ordering of query results corresponds to the ordering of queries being
-//     * dispatched
-//     *
-//     * @see #subscriptionQuery(String, Object, Class, Class)
-//     * @see Multi#concatMap(Function)
-//     */
-//    default Multi<SubscriptionQueryResult<?, ?>> subscriptionQuery( // NOSONAR
-//                                                                   Publisher<SubscriptionQueryMessage<?, ?, ?>> queries) {
-//        return subscriptionQuery(queries, Queues.BUFFER_XS);
-//    }
+    //    /**
+    //     * Uses the given {@link Publisher} of {@link SubscriptionQueryMessage}s to send incoming queries away. Queries will
+    //     * be sent sequentially. Once the result of Nth query arrives, the (N + 1)th query is dispatched. All queries will
+    //     * be dispatched using the given {@code backpressure}.
+    //     *
+    //     * @param queries      a {@link Publisher} stream of queries to be dispatched
+    //     * @param backpressure the backpressure mechanism to deal with producing of incremental updates
+    //     * @return a {@link Multi} of query results. The ordering of query results corresponds to the ordering of queries being
+    //     * dispatched
+    //     *
+    //     * @see #subscriptionQuery(String, Object, Class, Class)
+    //     * @see Multi#concatMap(Function)
+    //     */
+    //    default Multi<SubscriptionQueryResult<?, ?>> subscriptionQuery( // NOSONAR
+    //                                                                   Publisher<SubscriptionQueryMessage<?, ?, ?>> queries) {
+    //        return subscriptionQuery(queries, Queues.BUFFER_XS);
+    //    }
 
     /**
      * Uses the given {@link Publisher} of {@link SubscriptionQueryMessage}s to send incoming queries away. Queries will
@@ -491,18 +451,14 @@ public interface QueryGateway extends MessageDispatchInterceptorSupport<QueryMes
      *                         is made
      * @return a {@link Multi} of query results. The ordering of query results corresponds to the ordering of queries being
      * dispatched
-     *
      * @see #subscriptionQuery(String, Object, Class, Class)
      * @see Multi#concatMap(Function)
      */
     default Multi<SubscriptionQueryResult<?, ?>> subscriptionQuery( // NOSONAR
-                                                                   Publisher<SubscriptionQueryMessage<?, ?, ?>> queries,
-                                                                   int updateBufferSize) {
-        return Multi.createFrom().publisher(queries)
-                .concatMap(q -> subscriptionQuery(q.getQueryName(),
-                        q.getPayload(),
-                        q.getResponseType(),
-                        q.getUpdateResponseType(),
-                        updateBufferSize).toMulti());
+                                                                    Publisher<SubscriptionQueryMessage<?, ?, ?>> queries, int updateBufferSize) {
+        return Multi.createFrom().publisher(queries).concatMap(
+                q -> subscriptionQuery(q.getQueryName(), q.getPayload(), q.getResponseType(), q.getUpdateResponseType(),
+                                       updateBufferSize).toMulti());
     }
+
 }

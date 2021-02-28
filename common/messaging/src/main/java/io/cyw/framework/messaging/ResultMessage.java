@@ -46,14 +46,6 @@ public interface ResultMessage<R> extends Message<R> {
         return optionalExceptionResult().flatMap(HandlerExecutionException::resolveDetails);
     }
 
-    @Override
-    default <S> SerializedObject<S> serializePayload(Serializer serializer, Class<S> expectedRepresentation) {
-        if (isExceptional()) {
-            return serializer.serialize(exceptionDetails().orElse(null), expectedRepresentation);
-        }
-        return serializer.serialize(getPayload(), expectedRepresentation);
-    }
-
     /**
      * Serializes the exception result. Will create a {@link RemoteExceptionDescription} from the {@link Optional}
      * exception in this ResultMessage instead of serializing the original exception.
@@ -64,10 +56,8 @@ public interface ResultMessage<R> extends Message<R> {
      * @return the serialized exception as a {@link SerializedObject}
      */
     default <T> SerializedObject<T> serializeExceptionResult(Serializer serializer, Class<T> expectedRepresentation) {
-        return serializer.serialize(
-                optionalExceptionResult().map(RemoteExceptionDescription::describing).orElse(null),
-                expectedRepresentation
-        );
+        return serializer.serialize(optionalExceptionResult().map(RemoteExceptionDescription::describing).orElse(null),
+                                    expectedRepresentation);
     }
 
     @Override
@@ -75,4 +65,13 @@ public interface ResultMessage<R> extends Message<R> {
 
     @Override
     ResultMessage<R> andMetaData(Map<String, ?> metaData);
+
+    @Override
+    default <S> SerializedObject<S> serializePayload(Serializer serializer, Class<S> expectedRepresentation) {
+        if (isExceptional()) {
+            return serializer.serialize(exceptionDetails().orElse(null), expectedRepresentation);
+        }
+        return serializer.serialize(getPayload(), expectedRepresentation);
+    }
+
 }

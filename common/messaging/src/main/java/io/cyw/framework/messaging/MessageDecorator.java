@@ -83,12 +83,9 @@ public abstract class MessageDecorator<T> implements Message<T> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder()
-                .append(describeType())
-                .append("{");
+        StringBuilder sb = new StringBuilder().append(describeType()).append("{");
         describeTo(sb);
-        return sb.append("}")
-                 .toString();
+        return sb.append("}").toString();
     }
 
     /**
@@ -102,15 +99,8 @@ public abstract class MessageDecorator<T> implements Message<T> {
      * @param stringBuilder the builder to append data to
      */
     protected void describeTo(StringBuilder stringBuilder) {
-        stringBuilder.append("payload={")
-                     .append(getPayload())
-                     .append('}')
-                     .append(", metadata={")
-                     .append(getMetaData())
-                     .append('}')
-                     .append(", messageIdentifier='")
-                     .append(getIdentifier())
-                     .append('\'');
+        stringBuilder.append("payload={").append(getPayload()).append('}').append(", metadata={").append(getMetaData())
+                .append('}').append(", messageIdentifier='").append(getIdentifier()).append('\'');
     }
 
     /**
@@ -123,4 +113,5 @@ public abstract class MessageDecorator<T> implements Message<T> {
     protected String describeType() {
         return getClass().getSimpleName();
     }
+
 }

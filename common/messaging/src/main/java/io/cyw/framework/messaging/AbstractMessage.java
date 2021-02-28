@@ -26,6 +26,7 @@ import java.util.Map;
 public abstract class AbstractMessage<T> implements Message<T> {
 
     private static final long serialVersionUID = -5847906865361406657L;
+
     private final String identifier;
 
     /**
@@ -65,4 +66,5 @@ public abstract class AbstractMessage<T> implements Message<T> {
      * @return a copy of this instance with given metadata
      */
     protected abstract Message<T> withMetaData(MetaData metaData);
+
 }

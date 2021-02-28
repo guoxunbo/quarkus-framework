@@ -24,10 +24,12 @@ public class I18nUtils {
             String message = supplier.get();
             if (args != null && args.length > 0) {
                 for (Object arg : args) {
-                    message = StringUtils.replaceOnce(message, StringPool.LEFT_BRACE + StringPool.RIGHT_BRACE, CommonUtils.toString(arg));
+                    message = StringUtils.replaceOnce(message, StringPool.LEFT_BRACE + StringPool.RIGHT_BRACE,
+                                                      CommonUtils.toString(arg));
                 }
             }
             return message;
         };
     }
+
 }

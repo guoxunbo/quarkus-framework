@@ -39,4 +39,5 @@ public interface MessageHandlerInterceptorSupport<T extends Message<?>> {
      * @return a Registration, which may be used to remove the unregister the interceptor
      */
     Registration registerHandlerInterceptor(MessageHandlerInterceptor<? super T> handlerInterceptor);
+
 }

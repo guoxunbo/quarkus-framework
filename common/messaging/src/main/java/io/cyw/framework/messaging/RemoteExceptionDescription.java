@@ -32,9 +32,21 @@ import java.util.Objects;
 public class RemoteExceptionDescription implements Serializable {
 
     private static final String DELIMITER = ": ";
+
     private static final String CAUSED_BY = "\nCaused by ";
 
     private final List<String> descriptions;
+
+    /**
+     * Initialize a RemoteExceptionDescription with given {@code descriptions} describing the exception chain on the
+     * remote end of communication
+     *
+     * @param descriptions a {@link List} of {@link String}s, each describing a single "cause" on the remote end
+     */
+    @ConstructorProperties({"descriptions"})
+    public RemoteExceptionDescription(List<String> descriptions) {
+        this.descriptions = new ArrayList<>(descriptions);
+    }
 
     /**
      * Provide a description as a {@link List} of {@link String}s of all the causes in the given {@code exception}.
@@ -50,17 +62,6 @@ public class RemoteExceptionDescription implements Serializable {
         descriptions.add(exception.getClass().getName() + DELIMITER + exception.getMessage());
         Throwable cause = exception.getCause();
         return cause != null ? createDescription(cause, descriptions) : descriptions;
-    }
-
-    /**
-     * Initialize a RemoteExceptionDescription with given {@code descriptions} describing the exception chain on the
-     * remote end of communication
-     *
-     * @param descriptions a {@link List} of {@link String}s, each describing a single "cause" on the remote end
-     */
-    @ConstructorProperties({"descriptions"})
-    public RemoteExceptionDescription(List<String> descriptions) {
-        this.descriptions = new ArrayList<>(descriptions);
     }
 
     /**
@@ -100,4 +101,5 @@ public class RemoteExceptionDescription implements Serializable {
         }
         return sb.toString();
     }
+
 }

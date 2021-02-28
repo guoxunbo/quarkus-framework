@@ -42,4 +42,5 @@ public interface Registration extends AutoCloseable {
      * was not currently registered.
      */
     boolean cancel();
+
 }

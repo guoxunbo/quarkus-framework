@@ -33,11 +33,14 @@ import java.util.Map;
 public class SerializedObjectHolder {
 
     private final Message message;
+
     private final Object payloadGuard = new Object();
+
     // guarded by "payloadGuard"
     private final Map<Serializer, SerializedObject> serializedPayload = new HashMap<>();
 
     private final Object metaDataGuard = new Object();
+
     // guarded by "metaDataGuard"
     private final Map<Serializer, SerializedObject> serializedMetaData = new HashMap<>();
 
@@ -59,8 +62,7 @@ public class SerializedObjectHolder {
                 SerializedObject<T> serialized = serializer.serialize(message.getPayload(), expectedRepresentation);
                 if (message.getPayload() == null) {
                     // make sure the payload type is maintained
-                    serialized = new SimpleSerializedObject<>(serialized.getData(),
-                                                              serialized.getContentType(),
+                    serialized = new SimpleSerializedObject<>(serialized.getData(), serialized.getContentType(),
                                                               serializer.typeForClass(message.getPayloadType()));
                 }
                 serializedPayload.put(serializer, serialized);
@@ -84,4 +86,5 @@ public class SerializedObjectHolder {
             }
         }
     }
+
 }

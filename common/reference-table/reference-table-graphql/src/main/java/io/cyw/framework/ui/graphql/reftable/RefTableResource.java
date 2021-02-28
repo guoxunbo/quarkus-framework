@@ -23,7 +23,8 @@ public class RefTableResource {
     @Query("refTable")
     @Description("get referenceTable By name")
     public Uni<Optional<ReferenceTable>> table(@Name("tableName") String name) {
-        return queryGateway.query(new GetTableByNameQuery(name), ResponseTypes.optionalInstanceOf(ReferenceTable.class));
+        return queryGateway
+                .query(new GetTableByNameQuery(name), ResponseTypes.optionalInstanceOf(ReferenceTable.class));
     }
 
 }

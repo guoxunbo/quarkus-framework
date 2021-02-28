@@ -42,6 +42,7 @@ import java.util.ServiceLoader;
 public abstract class IdentifierFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(IdentifierFactory.class);
+
     private static final IdentifierFactory INSTANCE;
 
     static {
@@ -67,9 +68,9 @@ public abstract class IdentifierFactory {
             logger.debug("Found IdentifierFactory implementation using the {} Class Loader", classLoaderName);
             found = services.next();
             if (services.hasNext()) {
-                logger.warn("More than one IdentifierFactory implementation was found using the {} "
-                                    + "Class Loader. This may result in different selections being made after "
-                                    + "restart of the application.", classLoaderName);
+                logger.warn(
+                        "More than one IdentifierFactory implementation was found using the {} " + "Class Loader. This may result in different selections being made after " + "restart of the application.",
+                        classLoaderName);
             }
         }
         return found;
@@ -81,7 +82,6 @@ public abstract class IdentifierFactory {
      * provides randomly chosen {@code java.util.UUID}s.
      *
      * @return the IdentifierFactory implementation found on the classpath.
-     *
      * @see ServiceLoader
      */
     public static IdentifierFactory getInstance() {
@@ -96,4 +96,5 @@ public abstract class IdentifierFactory {
      * @return a String representation of a unique identifier
      */
     public abstract String generateIdentifier();
+
 }
