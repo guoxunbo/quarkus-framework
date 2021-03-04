@@ -22,8 +22,6 @@ import io.cyw.framework.utils.Assert;
 
 import java.util.Objects;
 
-import static java.lang.String.format;
-
 /**
  * SerializedType implementation that takes its properties as constructor parameters.
  *
@@ -45,7 +43,7 @@ public class SimpleSerializedType implements SerializedType {
      * @param revisionNumber The revision of the serialized object's type
      */
     public SimpleSerializedType(String objectType, String revisionNumber) {
-        Assert.notNull(objectType,
+        Assert.nonNull(objectType,
                        I18nUtils.load().andThen(I18nUtils.args("objectType")).apply(ErrorMessage.COMMON_NULL));
         this.type = objectType;
         this.revisionId = revisionNumber;
@@ -90,7 +88,7 @@ public class SimpleSerializedType implements SerializedType {
 
     @Override
     public String toString() {
-        return format("SimpleSerializedType[%s] (revision %s)", type, revisionId);
+        return I18nUtils.args(type,revisionId).apply(() -> "SimpleSerializedType[{}] (revision {})").get();
     }
 
 }

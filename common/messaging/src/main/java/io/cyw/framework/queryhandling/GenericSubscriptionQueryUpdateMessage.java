@@ -19,6 +19,7 @@ package io.cyw.framework.queryhandling;
 
 import io.cyw.framework.messaging.*;
 
+import javax.enterprise.inject.spi.CDI;
 import java.util.Map;
 
 /**

@@ -46,8 +46,8 @@ public class SimpleSerializedObject<T> implements SerializedObject<T> {
      * @param serializedType The type description of the serialized object
      */
     public SimpleSerializedObject(T data, Class<T> dataType, SerializedType serializedType) {
-        Assert.notNull(data, () -> "Data for a serialized object cannot be null");
-        Assert.notNull(serializedType, () -> "The type identifier of the serialized object");
+        Assert.nonNull(data, () -> "Data for a serialized object cannot be null");
+        Assert.nonNull(serializedType, () -> "The type identifier of the serialized object");
         this.data = data;
         this.dataType = dataType;
         this.type = serializedType;
